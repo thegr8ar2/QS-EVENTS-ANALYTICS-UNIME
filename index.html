@@ -9,58 +9,52 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <style>
         :root { --qs-navy: #002452; --qs-yellow: #fdb913; }
-        body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; }
-        .qs-navy { background-color: var(--qs-navy); }
+        .bg-qs-navy { background-color: var(--qs-navy); }
         .text-qs-navy { color: var(--qs-navy); }
-        /* Scrollbar styling */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
-<body class="p-6 md:p-8">
-    <div class="max-w-[1400px] mx-auto space-y-6">
-        <!-- Header -->
-        <header class="qs-navy text-white p-8 rounded-xl border-b-4 border-[#fdb913]">
-            <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY</h1>
-            <p class="text-blue-100 mt-2 text-sm font-medium opacity-90">Sample Period: 2024-2027 Aggregate Data</p>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <header class="bg-qs-navy text-white p-8 rounded-lg shadow-md border-b-4 border-[#fdb913]">
+            <h1 class="text-3xl font-bold">QS Events: Region of Interest - ITALY</h1>
+            <p class="text-blue-100 mt-2">Sample Period: 2024-2027 Aggregate Data</p>
         </header>
 
-        <!-- Charts Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-[600px] flex flex-col">
-                <h2 class="text-xl font-bold text-qs-navy mb-4">Interest & Conversion</h2>
-                <div class="flex-grow overflow-y-auto">
-                    <div id="chartWrapper" class="relative">
-                        <canvas id="interestChart"></canvas>
-                    </div>
+            <!-- Regional Interest Chart -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-qs-navy mb-4">Regional Interest (%)</h2>
+                <div class="relative h-[600px] overflow-y-auto">
+                    <canvas id="interestChart"></canvas>
                 </div>
-            </section>
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-[600px] flex flex-col">
-                <h2 class="text-xl font-bold text-qs-navy mb-4">Rank Distribution</h2>
+            </div>
+            <!-- Rank Distribution -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-qs-navy mb-4">Italy's Rank Distribution</h2>
                 <canvas id="rankChart" class="max-h-[500px]"></canvas>
-            </section>
+            </div>
         </div>
 
-        <!-- Table -->
-        <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="p-5 border-b border-gray-200 bg-gray-50">
-                <h2 class="text-lg font-bold text-qs-navy">Detailed Analytics</h2>
+        <!-- Data Table -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6 border-b border-gray-200 bg-gray-50">
+                <h2 class="text-lg font-bold text-qs-navy">Detailed Metrics Data</h2>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm" style="min-width: 1000px;">
-                    <thead class="qs-navy text-white">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-qs-navy text-white">
                         <tr>
+                            <th class="p-4">Year / Season</th>
                             <th class="p-4">Country</th>
                             <th class="p-4">Sample Pop.</th>
-                            <th class="p-4">Students Interested</th>
                             <th class="p-4">Interest (%)</th>
-                            <th class="p-4">Italy Rank</th>
+                            <th class="p-4">Rank</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-gray-100"></tbody>
+                    <tbody id="tableBody" class="divide-y divide-gray-200"></tbody>
                 </table>
             </div>
-        </section>
+        </div>
     </div>
 
     <script>
@@ -71,78 +65,54 @@
                 const res = await fetch('data.json');
                 const data = await res.json();
                 
-                // Process data
+                // Sort by Interest Descending
                 const processed = data.map(item => ({
                     ...item,
-                    pct: parseFloat(String(item.italyInterest).replace('%', '')),
-                    candidates: parseInt(item.distinctCandidates) || 0,
-                    population: parseInt(item.totalReg) || 0
+                    pct: parseFloat(String(item.italyInterest).replace('%', '')) * (item.italyInterest.includes('%') ? 1 : 100)
                 })).sort((a, b) => b.pct - a.pct);
 
-                renderCharts(processed);
-                renderTable(processed);
-            } catch(e) { console.error("Data Load Error:", e); }
-        }
-
-        function renderCharts(data) {
-            // Horizontal Bar Chart (Interest + Students)
-            const wrapper = document.getElementById('chartWrapper');
-            wrapper.style.height = (data.length * 40) + 'px'; // Dynamic height to prevent clumping
-            
-            new Chart(document.getElementById('interestChart'), {
-                type: 'bar',
-                data: {
-                    labels: data.map(i => i.country),
-                    datasets: [{
-                        data: data.map(i => i.pct),
-                        backgroundColor: '#002452',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false }, 
-                        datalabels: { 
-                            anchor: 'end', align: 'right', color: '#334155',
-                            formatter: (val, ctx) => {
-                                const country = data[ctx.dataIndex];
-                                return `${val}% (${country.candidates} Students)`;
-                            }
-                        } 
+                // --- Bar Chart ---
+                const wrapper = document.querySelector('#interestChart').parentNode;
+                wrapper.style.height = (processed.length * 40) + 'px';
+                
+                new Chart(document.getElementById('interestChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: processed.map(i => i.country),
+                        datasets: [{
+                            data: processed.map(i => i.pct),
+                            backgroundColor: '#002452'
+                        }]
                     },
-                    scales: { x: { display: false }, y: { grid: { display: false } } }
-                }
-            });
+                    options: {
+                        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            datalabels: { anchor: 'end', align: 'right', formatter: v => v + '%' }
+                        }
+                    }
+                });
 
-            // Doughnut Rank Chart
-            const rankCounts = {};
-            data.forEach(i => { rankCounts[i.italyRank] = (rankCounts[i.italyRank] || 0) + 1; });
-            
-            new Chart(document.getElementById('rankChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(rankCounts),
-                    datasets: [{
-                        data: Object.values(rankCounts),
-                        backgroundColor: ['#002452', '#fdb913', '#2563eb', '#059669']
-                    }]
-                }
-            });
+                // --- Rank Chart ---
+                const counts = processed.reduce((acc, i) => { acc[i.italyRank] = (acc[i.italyRank] || 0) + 1; return acc; }, {});
+                new Chart(document.getElementById('rankChart'), {
+                    type: 'doughnut',
+                    data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: ['#002452', '#fdb913', '#2563eb', '#059669', '#dc2626'] }] }
+                });
+
+                // --- Table ---
+                document.getElementById('tableBody').innerHTML = processed.map(i => `
+                    <tr>
+                        <td class="p-4">${i.eventYear}</td>
+                        <td class="p-4 font-bold">${i.country}</td>
+                        <td class="p-4">${i.totalReg}</td>
+                        <td class="p-4 text-blue-600 font-bold">${i.pct}%</td>
+                        <td class="p-4">${i.italyRank}</td>
+                    </tr>
+                `).join('');
+
+            } catch(e) { console.error("Data Error:", e); }
         }
-
-        function renderTable(data) {
-            document.getElementById('tableBody').innerHTML = data.map(i => `
-                <tr class="hover:bg-gray-50">
-                    <td class="p-4 font-bold">${i.country}</td>
-                    <td class="p-4">${i.population.toLocaleString()}</td>
-                    <td class="p-4">${i.candidates.toLocaleString()}</td>
-                    <td class="p-4 text-blue-600 font-bold">${i.italyInterest}</td>
-                    <td class="p-4">${i.italyRank}</td>
-                </tr>
-            `).join('');
-        }
-
         init();
     </script>
 </body>
