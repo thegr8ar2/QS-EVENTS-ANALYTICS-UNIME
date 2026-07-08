@@ -281,8 +281,21 @@
             // The value is the length of the array (number of countries)
             const counts = labels.map(label => rankGroups[label].length);
 
-            // Brand-aligned colors for the chart segments
-            const bgColors = ['#fdb913', '#002452', '#2563eb', '#60a5fa', '#94a3b8', '#cbd5e1'];
+            // Expanded color palette so colors never repeat (supports up to 12 categories)
+            const bgColors = [
+                '#fdb913', // QS Yellow
+                '#002452', // QS Navy
+                '#2563eb', // Blue
+                '#059669', // Emerald Green
+                '#ea580c', // Orange
+                '#8b5cf6', // Purple
+                '#db2777', // Pink
+                '#0891b2', // Cyan
+                '#65a30d', // Lime Green
+                '#475569', // Slate Grey (Usually lands on 'Unranked')
+                '#dc2626', // Red
+                '#d97706'  // Amber
+            ];
 
             const ctx = document.getElementById('rankChart').getContext('2d');
             if (myRankChart) myRankChart.destroy();
