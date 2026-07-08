@@ -10,51 +10,54 @@
     <style>
         :root { --qs-navy: #002452; --qs-yellow: #fdb913; }
         body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; }
-        .chart-scroll-container { overflow-y: auto; overflow-x: hidden; }
+        .qs-navy { background-color: var(--qs-navy); }
+        .text-qs-navy { color: var(--qs-navy); }
+        /* Scrollbar styling */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
-<body class="p-8">
+<body class="p-6 md:p-8">
     <div class="max-w-[1400px] mx-auto space-y-6">
-        <header class="bg-[#002452] text-white p-8 rounded-xl border-b-4 border-[#fdb913]">
+        <!-- Header -->
+        <header class="qs-navy text-white p-8 rounded-xl border-b-4 border-[#fdb913]">
             <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY</h1>
+            <p class="text-blue-100 mt-2 text-sm font-medium opacity-90">Sample Period: 2024-2027 Aggregate Data</p>
         </header>
 
+        <!-- Charts Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[600px]">
-                <h2 class="text-xl font-bold text-[#002452] mb-4">Regional Interest in Italy (%)</h2>
-                <div class="chart-scroll-container flex-grow" id="interestScrollArea">
-                    <div class="relative w-full" id="interestCanvasWrapper">
+            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-[600px] flex flex-col">
+                <h2 class="text-xl font-bold text-qs-navy mb-4">Interest & Conversion</h2>
+                <div class="flex-grow overflow-y-auto">
+                    <div id="chartWrapper" class="relative">
                         <canvas id="interestChart"></canvas>
                     </div>
                 </div>
             </section>
-
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[600px]">
-                <h2 class="text-xl font-bold text-[#002452] mb-1">Italy's Rank Distribution</h2>
-                <div class="relative flex-grow">
-                    <canvas id="rankChart"></canvas>
-                </div>
+            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-[600px] flex flex-col">
+                <h2 class="text-xl font-bold text-qs-navy mb-4">Rank Distribution</h2>
+                <canvas id="rankChart" class="max-h-[500px]"></canvas>
             </section>
         </div>
 
+        <!-- Table -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="p-5 border-b border-gray-200 bg-gray-50">
-                <h2 class="text-lg font-bold text-[#002452]">Detailed Metrics Data</h2>
+                <h2 class="text-lg font-bold text-qs-navy">Detailed Analytics</h2>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm" id="dataTable" style="min-width: 1000px;">
-                    <thead class="bg-[#002452] text-white">
+                <table class="w-full text-left text-sm" style="min-width: 1000px;">
+                    <thead class="qs-navy text-white">
                         <tr>
-                            <th class="p-4 uppercase text-xs">Year / Season</th>
-                            <th class="p-4 uppercase text-xs">Country</th>
-                            <th class="p-4 uppercase text-xs">Sample Pop.</th>
-                            <th class="p-4 uppercase text-xs">Italy Interest</th>
-                            <th class="p-4 uppercase text-xs">Rank</th>
+                            <th class="p-4">Country</th>
+                            <th class="p-4">Sample Pop.</th>
+                            <th class="p-4">Students Interested</th>
+                            <th class="p-4">Interest (%)</th>
+                            <th class="p-4">Italy Rank</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100"></tbody>
+                    <tbody id="tableBody" class="divide-y divide-gray-100"></tbody>
                 </table>
             </div>
         </section>
@@ -63,33 +66,35 @@
     <script>
         Chart.register(ChartDataLabels);
 
-        async function initDashboard() {
+        async function init() {
             try {
-                const response = await fetch('data.json');
-                const data = await response.json();
+                const res = await fetch('data.json');
+                const data = await res.json();
                 
-                // Clean data: remove % and parse
-                const processed = data.map(i => ({
-                    ...i,
-                    interestNum: parseFloat(String(i.italyInterest).replace('%', ''))
-                })).sort((a, b) => b.interestNum - a.interestNum);
+                // Process data
+                const processed = data.map(item => ({
+                    ...item,
+                    pct: parseFloat(String(item.italyInterest).replace('%', '')),
+                    candidates: parseInt(item.distinctCandidates) || 0,
+                    population: parseInt(item.totalReg) || 0
+                })).sort((a, b) => b.pct - a.pct);
 
                 renderCharts(processed);
                 renderTable(processed);
-            } catch(e) { console.error("Error loading:", e); }
+            } catch(e) { console.error("Data Load Error:", e); }
         }
 
         function renderCharts(data) {
-            // Main Interest Chart
-            const wrapper = document.getElementById('interestCanvasWrapper');
-            wrapper.style.height = (data.length * 45) + 'px';
+            // Horizontal Bar Chart (Interest + Students)
+            const wrapper = document.getElementById('chartWrapper');
+            wrapper.style.height = (data.length * 40) + 'px'; // Dynamic height to prevent clumping
             
             new Chart(document.getElementById('interestChart'), {
                 type: 'bar',
                 data: {
                     labels: data.map(i => i.country),
                     datasets: [{
-                        data: data.map(i => ({ x: i.interestNum, total: i.totalReg })),
+                        data: data.map(i => i.pct),
                         backgroundColor: '#002452',
                         borderRadius: 4
                     }]
@@ -99,46 +104,46 @@
                     plugins: { 
                         legend: { display: false }, 
                         datalabels: { 
-                            anchor: 'end', align: 'right',
-                            formatter: (v) => `${v.x}% | ${v.total} Reg.`
+                            anchor: 'end', align: 'right', color: '#334155',
+                            formatter: (val, ctx) => {
+                                const country = data[ctx.dataIndex];
+                                return `${val}% (${country.candidates} Students)`;
+                            }
                         } 
                     },
                     scales: { x: { display: false }, y: { grid: { display: false } } }
                 }
             });
 
-            // Rank Distribution
-            const ranks = {};
-            data.forEach(i => {
-                const r = i.italyRank || 'Unranked';
-                ranks[r] = (ranks[r] || 0) + 1;
-            });
+            // Doughnut Rank Chart
+            const rankCounts = {};
+            data.forEach(i => { rankCounts[i.italyRank] = (rankCounts[i.italyRank] || 0) + 1; });
+            
             new Chart(document.getElementById('rankChart'), {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(ranks),
+                    labels: Object.keys(rankCounts),
                     datasets: [{
-                        data: Object.values(ranks),
-                        backgroundColor: ['#002452', '#fdb913', '#2563eb', '#059669', '#ea580c', '#8b5cf6', '#db2777', '#0891b2']
+                        data: Object.values(rankCounts),
+                        backgroundColor: ['#002452', '#fdb913', '#2563eb', '#059669']
                     }]
                 }
             });
         }
 
         function renderTable(data) {
-            const tbody = document.querySelector('#dataTable tbody');
-            tbody.innerHTML = data.map(i => `
-                <tr>
-                    <td class="p-4">${i.eventYear}</td>
+            document.getElementById('tableBody').innerHTML = data.map(i => `
+                <tr class="hover:bg-gray-50">
                     <td class="p-4 font-bold">${i.country}</td>
-                    <td class="p-4">${i.totalReg}</td>
+                    <td class="p-4">${i.population.toLocaleString()}</td>
+                    <td class="p-4">${i.candidates.toLocaleString()}</td>
                     <td class="p-4 text-blue-600 font-bold">${i.italyInterest}</td>
-                    <td class="p-4 font-bold">${i.italyRank}</td>
+                    <td class="p-4">${i.italyRank}</td>
                 </tr>
             `).join('');
         }
 
-        initDashboard();
+        init();
     </script>
 </body>
 </html>
