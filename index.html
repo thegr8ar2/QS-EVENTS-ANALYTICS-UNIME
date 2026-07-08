@@ -15,218 +15,178 @@
             --qs-navy: #002452;
             --qs-yellow: #fdb913;
         }
-        
         body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; }
-        
         .chart-scroll-container { overflow-y: auto; overflow-x: hidden; padding-right: 8px; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        table { min-width: 1200px; border-collapse: separate; border-spacing: 0; }
-        th, td { white-space: nowrap; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-8">
 
     <div class="max-w-[1400px] mx-auto space-y-6">
         
-        <header class="bg-[#002452] text-white p-6 rounded-xl shadow-lg border-b-4 border-[#fdb913] flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY</h1>
-                <p class="text-blue-200 mt-1 text-sm font-medium">Real-time competitive analysis & regional rankings</p>
-            </div>
-            
-            <div class="flex gap-2 bg-white/10 p-1.5 rounded-lg backdrop-blur-sm">
-                <button id="btnSortAlpha" class="px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20" onclick="handleSort('alpha')">Sort A-Z</button>
-                <button id="btnSortDesc" class="px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm" onclick="handleSort('desc')">Sort by Top Interest</button>
-            </div>
+        <header class="bg-[#002452] text-white p-8 rounded-xl shadow-lg border-b-4 border-[#fdb913]">
+            <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY</h1>
+            <p class="text-blue-200 mt-2 font-medium">Real-time competitive analysis & regional rankings</p>
         </header>
 
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
-            <section class="xl:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[550px]">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-[#002452]">Regional Interest in Italy (%)</h2>
-                    <span class="px-3 py-1 bg-blue-50 text-[#002452] text-xs font-bold rounded-full border border-blue-100" id="countryCount">Loading...</span>
-                </div>
-                
-                <div id="loading" class="flex-grow flex items-center justify-center text-gray-500 font-medium">Fetching live data from GitHub...</div>
-                
-                <div class="chart-scroll-container flex-grow" id="chartScrollArea" style="display: none;">
-                    <div class="relative w-full" id="canvasWrapper">
+            <!-- 1. Interest Chart -->
+            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[500px]">
+                <h2 class="text-xl font-bold text-[#002452] mb-4">Regional Interest in Italy (%)</h2>
+                <div class="chart-scroll-container flex-grow" id="interestScrollArea">
+                    <div class="relative w-full" id="interestCanvasWrapper">
                         <canvas id="interestChart"></canvas>
                     </div>
                 </div>
             </section>
 
-            <section class="xl:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[550px]">
+            <!-- 2. Rank Distribution -->
+            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[500px]">
                 <h2 class="text-xl font-bold text-[#002452] mb-1">Italy's Rank Distribution</h2>
-                <p class="text-xs text-gray-500 mb-6">How often Italy places 1st, 2nd, etc. against EU competitors</p>
-                
-                <div class="relative flex-grow flex items-center justify-center">
+                <p class="text-xs text-gray-500 mb-4">How often Italy places 1st, 2nd, etc. against EU competitors</p>
+                <div class="relative flex-grow">
                     <canvas id="rankChart"></canvas>
+                </div>
+            </section>
+
+            <!-- 3. Sample Population Chart (New) -->
+            <section class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[400px]">
+                <h2 class="text-xl font-bold text-[#002452] mb-4">Sample Population Size per Country</h2>
+                <div class="chart-scroll-container flex-grow" id="popScrollArea">
+                    <div class="relative w-full" id="popCanvasWrapper">
+                        <canvas id="popChart"></canvas>
+                    </div>
                 </div>
             </section>
         </div>
 
+        <!-- 4. Detailed Data Table -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="p-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+            <div class="p-5 border-b border-gray-200 bg-gray-50">
                 <h2 class="text-lg font-bold text-[#002452]">Detailed Metrics Data</h2>
-                <p class="text-xs text-gray-500">Scroll horizontally to view all columns</p>
             </div>
-            
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm" id="dataTable">
                     <thead class="bg-[#002452] text-white">
                         <tr>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Year / Season</th>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Country</th>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Sample Pop.</th>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Italy Interest</th>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Distinct Candidates</th>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Top EU Comp 1</th>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Top EU Comp 2</th>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Italy's Rank</th>
+                            <th class="p-4 uppercase text-xs">Year / Season</th>
+                            <th class="p-4 uppercase text-xs">Country</th>
+                            <th class="p-4 uppercase text-xs">Sample Pop.</th>
+                            <th class="p-4 uppercase text-xs">Italy Interest</th>
+                            <th class="p-4 uppercase text-xs">Distinct Candidates</th>
+                            <th class="p-4 uppercase text-xs">Top EU Comp 1</th>
+                            <th class="p-4 uppercase text-xs">Top EU Comp 2</th>
+                            <th class="p-4 uppercase text-xs">Italy's Rank</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
-                    </tbody>
+                    <tbody class="divide-y divide-gray-100"></tbody>
                 </table>
             </div>
         </section>
     </div>
 
     <script>
-        let dashboardData = [];
-        let myChart = null;
-        let myRankChart = null;
-        let currentSort = 'desc';
-
         Chart.register(ChartDataLabels);
 
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchData();
-        });
+        async function initDashboard() {
+            const response = await fetch(`data.json?t=${new Date().getTime()}`);
+            const data = await response.json();
+            
+            // Process data for charts
+            const sortedInterest = [...data].sort((a, b) => parseFloat(b.italyInterest) - parseFloat(a.italyInterest));
+            const sortedPop = [...data].sort((a, b) => parseInt(b.totalReg) - parseInt(a.totalReg));
 
-        async function fetchData() {
-            try {
-                const response = await fetch(`data.json?t=${new Date().getTime()}`);
-                if (!response.ok) throw new Error('Data file not found');
-                const rawData = await response.json();
-                processData(rawData);
-            } catch (error) {
-                document.getElementById('loading').innerText = "Unable to load data.";
-            }
+            renderInterestChart(sortedInterest);
+            renderRankChart(data);
+            renderPopChart(sortedPop);
+            renderTable(data);
         }
 
-        function processData(rawData) {
-            dashboardData = rawData.map(item => {
-                const rawInterest = item.italyInterest || '0';
-                let numericInterest = parseFloat(rawInterest.toString().replace('%', ''));
-                numericInterest = Math.round(numericInterest * 10) / 10;
-                return { ...item, numericInterest: isNaN(numericInterest) ? 0 : numericInterest };
-            });
-
-            document.getElementById('countryCount').innerText = `${dashboardData.length} Countries Analyzed`;
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('chartScrollArea').style.display = 'block';
-            renderDashboard();
-        }
-
-        function handleSort(sortType) {
-            currentSort = sortType;
-            renderDashboard();
-        }
-
-        function renderDashboard() {
-            let sortedData = [...dashboardData];
-            if (currentSort === 'desc') sortedData.sort((a, b) => b.numericInterest - a.numericInterest);
-            else sortedData.sort((a, b) => a.country.localeCompare(b.country));
-
-            renderBarChart(sortedData);
-            renderRankChart(sortedData);
-            renderTable(sortedData);
-        }
-
-        function renderBarChart(data) {
-            const requiredHeight = data.length * 40;
-            document.getElementById('canvasWrapper').style.height = Math.max(requiredHeight, 400) + 'px';
-            const ctx = document.getElementById('interestChart').getContext('2d');
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
+        function renderInterestChart(data) {
+            document.getElementById('interestCanvasWrapper').style.height = (data.length * 40) + 'px';
+            new Chart(document.getElementById('interestChart'), {
                 type: 'bar',
                 data: {
                     labels: data.map(i => i.country),
                     datasets: [{
-                        label: 'Italy Interest (%)',
-                        data: data.map(i => i.numericInterest),
+                        data: data.map(i => parseFloat(i.italyInterest)),
                         backgroundColor: '#002452',
-                        hoverBackgroundColor: '#fdb913',
-                        borderRadius: 4, barPercentage: 0.7,
+                        borderRadius: 4
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-                    plugins: {
-                        legend: { display: false },
-                        datalabels: { color: '#1e293b', anchor: 'end', align: 'right', font: { weight: 'bold' }, formatter: v => v > 0 ? v + '%' : '' }
-                    },
-                    scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + '%' } }, y: { grid: { display: false } } }
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'right', formatter: v => v + '%' } },
+                    scales: { x: { display: false }, y: { grid: { display: false } } }
+                }
+            });
+        }
+
+        function renderPopChart(data) {
+            document.getElementById('popCanvasWrapper').style.height = (data.length * 35) + 'px';
+            new Chart(document.getElementById('popChart'), {
+                type: 'bar',
+                data: {
+                    labels: data.map(i => i.country),
+                    datasets: [{
+                        label: 'Total Sample Population',
+                        data: data.map(i => parseInt(i.totalReg)),
+                        backgroundColor: '#fdb913',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'right' } },
+                    scales: { x: { display: false }, y: { grid: { display: false } } }
                 }
             });
         }
 
         function renderRankChart(data) {
-            const rankGroups = {};
-            data.forEach(item => {
-                let rankStr = String(item.italyRank).trim();
-                let label = (rankStr && rankStr !== '-' && !isNaN(rankStr)) ? 'Rank ' + rankStr : 'Unranked';
-                if (!rankGroups[label]) rankGroups[label] = [];
-                rankGroups[label].push(item.country);
+            const rankMap = {};
+            data.forEach(i => {
+                let r = i.italyRank || 'Unranked';
+                if (!rankMap[r]) rankMap[r] = { count: 0, countries: [] };
+                rankMap[r].count++;
+                rankMap[r].countries.push(i.country);
             });
-
-            const labels = Object.keys(rankGroups).sort((a, b) => {
-                if (a === 'Unranked') return 1; if (b === 'Unranked') return -1;
-                return parseInt(a.replace('Rank ', '')) - parseInt(b.replace('Rank ', ''));
-            });
-            const counts = labels.map(label => rankGroups[label].length);
-            const bgColors = ['#fdb913', '#002452', '#2563eb', '#059669', '#ea580c', '#8b5cf6', '#db2777', '#0891b2', '#65a30d', '#475569'];
-
-            const ctx = document.getElementById('rankChart').getContext('2d');
-            if (myRankChart) myRankChart.destroy();
-            myRankChart = new Chart(ctx, {
+            const labels = Object.keys(rankMap).sort();
+            new Chart(document.getElementById('rankChart'), {
                 type: 'doughnut',
-                data: { labels, datasets: [{ data: counts, backgroundColor: bgColors, borderWidth: 2, borderColor: '#ffffff' }] },
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: labels.map(l => rankMap[l].count),
+                        backgroundColor: ['#002452', '#fdb913', '#2563eb', '#059669', '#ea580c', '#8b5cf6', '#db2777', '#0891b2', '#65a30d', '#475569']
+                    }]
+                },
                 options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '60%',
-                    plugins: {
-                        legend: { position: 'bottom', labels: { usePointStyle: true } },
-                        tooltip: { callbacks: { label: context => [`Count: ${context.raw}`, 'Countries:', ...rankGroups[context.label].map(c => '• ' + c)] } }
-                    }
+                    plugins: { tooltip: { callbacks: { label: c => `Count: ${c.raw} | Countries: ${rankMap[c.label].countries.join(', ')}` } } }
                 }
             });
         }
 
         function renderTable(data) {
             const tbody = document.querySelector('#dataTable tbody');
-            tbody.innerHTML = ''; 
-            data.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-4 text-gray-500">${item.eventYear || '-'}</td>
-                    <td class="p-4 font-bold text-[#002452]">${item.country || '-'}</td>
-                    <td class="p-4 font-semibold text-gray-700">${item.totalReg || '0'}</td>
-                    <td class="p-4"><span class="bg-blue-50 text-[#002452] px-2 py-1 rounded font-bold">${item.numericInterest}%</span></td>
-                    <td class="p-4">${item.distinctCandidates || '0'}</td>
-                    <td class="p-4">${item.euComp1 || '-'}</td>
-                    <td class="p-4">${item.euComp2 || '-'}</td>
-                    <td class="p-4"><span class="bg-[#fdb913]/20 text-[#002452] px-2 py-1 rounded font-bold">${item.italyRank || '-'}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
+            tbody.innerHTML = data.map(i => `
+                <tr>
+                    <td class="p-4">${i.eventYear}</td>
+                    <td class="p-4 font-bold text-[#002452]">${i.country}</td>
+                    <td class="p-4">${i.totalReg}</td>
+                    <td class="p-4 font-bold text-blue-600">${i.italyInterest}</td>
+                    <td class="p-4">${i.distinctCandidates}</td>
+                    <td class="p-4">${i.euComp1}</td>
+                    <td class="p-4">${i.euComp2}</td>
+                    <td class="p-4 font-bold">${i.italyRank}</td>
+                </tr>
+            `).join('');
         }
+
+        initDashboard();
     </script>
 </body>
 </html>
