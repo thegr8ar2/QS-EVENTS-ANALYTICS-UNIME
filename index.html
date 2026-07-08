@@ -33,8 +33,10 @@
 </head>
 <body class="p-4 md:p-8">
 
+    <!-- Main Container -->
     <div class="max-w-[1400px] mx-auto space-y-6">
         
+        <!-- Top Header & Controls Area -->
         <header class="bg-[#002452] text-white p-6 rounded-xl shadow-lg border-b-4 border-[#fdb913] flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY 2024-27</h1>
@@ -44,15 +46,19 @@
                 </p>
             </div>
             
+            <!-- Sorting Controls moved inside the header for compactness -->
             <div class="flex gap-2 bg-white/10 p-1.5 rounded-lg backdrop-blur-sm flex-wrap justify-end">
                 <button id="btnSortAlpha" class="px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20" onclick="handleSort('alpha')">Sort A-Z</button>
                 <button id="btnSortDesc" class="px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm" onclick="handleSort('desc')">Sort by Interest (%)</button>
-                <button id="btnSortVolume" class="px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20" onclick="handleSort('volume')">Sort by Volume</button>
+                <!-- NEW: Option 1 Ratio Sorting Button -->
+                <button id="btnSortRatio" class="px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20" onclick="handleSort('ratio')">Sort by Vol/Interest Ratio</button>
             </div>
         </header>
 
+        <!-- Charts Grid Layout (Middle Section) -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             
+            <!-- Left Chart: Interest Percentage (Spans 2 columns on wide screens) -->
             <section class="xl:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[550px]">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-[#002452]">Regional Interest in Italy (%)</h2>
@@ -61,6 +67,7 @@
                 
                 <div id="loading" class="flex-grow flex items-center justify-center text-gray-500 font-medium">Fetching live data from GitHub...</div>
                 
+                <!-- Scrollable wrapper for the bar chart -->
                 <div class="chart-scroll-container flex-grow" id="chartScrollArea" style="display: none;">
                     <div class="relative w-full" id="canvasWrapper">
                         <canvas id="interestChart"></canvas>
@@ -68,6 +75,7 @@
                 </div>
             </section>
 
+            <!-- Right Chart: NEW Italy Rank Distribution (Spans 1 column) -->
             <section class="xl:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[550px]">
                 <h2 class="text-xl font-bold text-[#002452] mb-1">Italy's Rank Distribution</h2>
                 <p class="text-xs text-gray-500 mb-6">How often Italy places 1st, 2nd, etc. against EU competitors</p>
@@ -78,12 +86,14 @@
             </section>
         </div>
 
+        <!-- Data Table Section (Full Width Bottom) -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="p-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                 <h2 class="text-lg font-bold text-[#002452]">Detailed Metrics Data</h2>
                 <p class="text-xs text-gray-500">Scroll horizontally to view all columns</p>
             </div>
             
+            <!-- overflow-x-auto enables horizontal scrolling if the screen is small -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm" id="dataTable">
                     <thead class="bg-[#002452] text-white">
@@ -99,7 +109,8 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        </tbody>
+                        <!-- Table rows injected via JS -->
+                    </tbody>
                 </table>
             </div>
         </section>
@@ -144,7 +155,6 @@
                 const totalRegStr = String(item.totalReg || '0').replace(/,/g, '');
                 const totalRegNum = parseInt(totalRegStr) || 0;
                 
-                // Parse Distinct Candidates directly from the data source
                 const distinctStr = String(item.distinctCandidates || '0').replace(/,/g, '');
                 const distinctNum = parseInt(distinctStr) || 0;
                 
@@ -156,7 +166,6 @@
                 };
             });
 
-            // Update KPI Counter to sum Distinct Candidates
             const globalPop = dashboardData.reduce((sum, curr) => sum + curr.totalReg, 0);
             const globalInterested = dashboardData.reduce((sum, curr) => sum + curr.distinctNum, 0);
             
@@ -173,15 +182,14 @@
             
             const btnAlpha = document.getElementById('btnSortAlpha');
             const btnDesc = document.getElementById('btnSortDesc');
-            const btnVolume = document.getElementById('btnSortVolume');
+            const btnRatio = document.getElementById('btnSortRatio');
             
             const activeClass = "px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm";
             const inactiveClass = "px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20";
             
-            // Apply active/inactive styling based on current sort
             btnAlpha.className = sortType === 'alpha' ? activeClass : inactiveClass;
             btnDesc.className = sortType === 'desc' ? activeClass : inactiveClass;
-            btnVolume.className = sortType === 'volume' ? activeClass : inactiveClass;
+            btnRatio.className = sortType === 'ratio' ? activeClass : inactiveClass;
             
             renderDashboard();
         }
@@ -189,15 +197,16 @@
         function renderDashboard() {
             let sortedData = [...dashboardData];
             
-            // Apply Sorting logic
             if (currentSort === 'desc') {
-                // Sort by highest percentage
                 sortedData.sort((a, b) => b.numericInterest - a.numericInterest);
-            } else if (currentSort === 'volume') {
-                // NEW: Sort by highest distinct volume
-                sortedData.sort((a, b) => b.distinctNum - a.distinctNum);
+            } else if (currentSort === 'ratio') {
+                // NEW: Sort by Distinct Candidates divided by Percentage
+                sortedData.sort((a, b) => {
+                    const ratioA = a.numericInterest > 0 ? (a.distinctNum / a.numericInterest) : 0;
+                    const ratioB = b.numericInterest > 0 ? (b.distinctNum / b.numericInterest) : 0;
+                    return ratioB - ratioA; // Descending order
+                });
             } else {
-                // Sort A-Z by country name
                 sortedData.sort((a, b) => a.country.localeCompare(b.country));
             }
 
@@ -274,7 +283,6 @@
                             beginAtZero: true,
                             grid: { color: '#f1f5f9' },
                             ticks: { callback: function(value) { return value + '%'; } },
-                            // Give room for the wider '344 | 2%' labels
                             grace: '30%' 
                         },
                         y: {
