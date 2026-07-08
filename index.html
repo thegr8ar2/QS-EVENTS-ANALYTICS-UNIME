@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QS Events: Italy Interest Analysis Dashboard</title>
+    <title>QS Events: Region of Interest - ITALY</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -39,7 +39,7 @@
         <!-- Top Header & Controls Area -->
         <header class="bg-[#002452] text-white p-6 rounded-xl shadow-lg border-b-4 border-[#fdb913] flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <h1 class="text-3xl font-bold tracking-tight">QS Events: Italy Interest Dashboard</h1>
+                <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY</h1>
                 <p class="text-blue-200 mt-1 text-sm font-medium">Real-time competitive analysis & regional rankings</p>
             </div>
             
@@ -254,28 +254,32 @@
 
         // --- CHART 2: New Doughnut Chart for Italy's Rank ---
         function renderRankChart(data) {
-            const rankCounts = {};
+            // Group the data: { "Rank 1": ["Argentina", ...], "Rank 2": [...] }
+            const rankGroups = {};
             
-            // Loop through data and group the ranks
             data.forEach(item => {
-                let rank = String(item.italyRank).trim();
+                let rankStr = String(item.italyRank).trim();
+                let label = 'Unranked';
                 
-                if (!rank || rank === '-' || rank === 'undefined') {
-                    rank = 'Unranked';
-                } else if (!isNaN(rank)) {
-                    rank = 'Rank ' + rank;
+                if (rankStr && rankStr !== '-' && rankStr !== 'undefined' && !isNaN(rankStr)) {
+                    label = 'Rank ' + rankStr;
                 }
                 
-                rankCounts[rank] = (rankCounts[rank] || 0) + 1;
+                if (!rankGroups[label]) {
+                    rankGroups[label] = [];
+                }
+                rankGroups[label].push(item.country);
             });
 
             // Sort labels intelligently (Rank 1, Rank 2, ... Unranked)
-            const labels = Object.keys(rankCounts).sort((a, b) => {
+            const labels = Object.keys(rankGroups).sort((a, b) => {
                 if (a === 'Unranked') return 1;
                 if (b === 'Unranked') return -1;
                 return a.localeCompare(b);
             });
-            const counts = labels.map(label => rankCounts[label]);
+            
+            // The value is the length of the array (number of countries)
+            const counts = labels.map(label => rankGroups[label].length);
 
             // Brand-aligned colors for the chart segments
             const bgColors = ['#fdb913', '#002452', '#2563eb', '#60a5fa', '#94a3b8', '#cbd5e1'];
@@ -308,6 +312,31 @@
                             color: '#ffffff',
                             font: { weight: 'bold', size: 14 },
                             formatter: (value) => value
+                        },
+                        // CUSTOM TOOLTIP LOGIC
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    // Get the rank label (e.g. "Rank 1")
+                                    const rankLabel = context.label; 
+                                    // Get the list of countries for this rank
+                                    const countryList = rankGroups[rankLabel];
+                                    
+                                    // Create a multiline string for the tooltip
+                                    let tooltipLines = [
+                                        `Count: ${context.raw}`,
+                                        '----------',
+                                        'Countries:'
+                                    ];
+                                    
+                                    // Append each country to the tooltip array
+                                    countryList.forEach(country => {
+                                        tooltipLines.push(`• ${country}`);
+                                    });
+                                    
+                                    return tooltipLines;
+                                }
+                            }
                         }
                     }
                 }
