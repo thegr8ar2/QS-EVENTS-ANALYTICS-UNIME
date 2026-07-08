@@ -100,9 +100,20 @@
             border-radius: 12px;
             border: 1px solid var(--border-color);
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            /* Give it a good minimum height so horizontal bars aren't squished */
-            height: 650px; 
+            /* Removed the fixed 650px height so we can handle it dynamically */
             position: relative;
+        }
+
+        /* New classes for smooth scrolling to fix clumping */
+        .chart-scroll-container {
+            overflow-y: auto;
+            max-height: 650px; /* Keep the card a reasonable size */
+            padding-right: 15px; /* Room for the scrollbar */
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            /* Height will be injected dynamically via JS */
         }
 
         /* Table Section */
@@ -174,7 +185,11 @@
         <!-- Chart Container -->
         <div class="chart-card">
             <div id="loading">Fetching live data from GitHub...</div>
-            <canvas id="interestChart" style="display: none;"></canvas>
+            <div class="chart-scroll-container" id="chartScrollArea" style="display: none;">
+                <div class="canvas-wrapper" id="canvasWrapper">
+                    <canvas id="interestChart"></canvas>
+                </div>
+            </div>
         </div>
 
         <!-- Data Table -->
@@ -232,9 +247,16 @@
         // 2. Process and clean the raw data
         function processData(rawData) {
             dashboardData = rawData.map(item => {
-                // Remove the '%' sign for mathematical sorting/charting, but keep original for display
                 const rawInterest = item.italyInterest || '0';
-                const numericInterest = parseFloat(rawInterest.toString().replace('%', ''));
+                let numericInterest = parseFloat(rawInterest.toString().replace('%', ''));
+                
+                // FIX: If Excel exported pure decimals (e.g., 0.44 instead of 44%)
+                if (numericInterest > 0 && numericInterest <= 1 && !rawInterest.toString().includes('%')) {
+                    numericInterest = numericInterest * 100;
+                }
+                
+                // Clean up long floating point numbers (e.g., 44.00000001 -> 44)
+                numericInterest = Math.round(numericInterest * 10) / 10;
                 
                 return {
                     ...item,
@@ -242,9 +264,9 @@
                 };
             });
 
-            // Hide loading text and show canvas
+            // Hide loading text and show scrollable canvas wrapper
             document.getElementById('loading').style.display = 'none';
-            document.getElementById('interestChart').style.display = 'block';
+            document.getElementById('chartScrollArea').style.display = 'block';
 
             // Initial render
             renderDashboard();
@@ -277,6 +299,10 @@
 
         // 5. Build and render the Chart.js horizontal bar chart
         function renderChart(data) {
+            // FIX FOR CLUMPING: Dynamically calculate height so every bar gets 40 pixels of space
+            const requiredHeight = data.length * 40;
+            document.getElementById('canvasWrapper').style.height = Math.max(requiredHeight, 400) + 'px';
+
             const ctx = document.getElementById('interestChart').getContext('2d');
             
             // Extract labels and data arrays
@@ -323,7 +349,8 @@
                             align: 'right',
                             font: { weight: 'bold', family: 'Inter', size: 12 },
                             formatter: function(value) {
-                                return value + '%';
+                                // Hide labels that are 0% to reduce visual clutter
+                                return value > 0 ? value + '%' : '';
                             }
                         }
                     },
