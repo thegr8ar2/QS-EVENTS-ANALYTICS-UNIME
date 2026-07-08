@@ -27,14 +27,13 @@
         
         <header class="bg-[#002452] text-white p-8 rounded-xl shadow-lg border-b-4 border-[#fdb913]">
             <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY</h1>
-            <p class="text-blue-200 mt-2 font-medium">Real-time competitive analysis & regional rankings</p>
         </header>
 
         <!-- Main Dashboard Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             <!-- 1. Interest Chart -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[500px]">
+            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[600px]">
                 <h2 class="text-xl font-bold text-[#002452] mb-4">Regional Interest in Italy (%)</h2>
                 <div class="chart-scroll-container flex-grow" id="interestScrollArea">
                     <div class="relative w-full" id="interestCanvasWrapper">
@@ -44,32 +43,22 @@
             </section>
 
             <!-- 2. Rank Distribution -->
-            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[500px]">
+            <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[600px]">
                 <h2 class="text-xl font-bold text-[#002452] mb-1">Italy's Rank Distribution</h2>
                 <p class="text-xs text-gray-500 mb-4">How often Italy places 1st, 2nd, etc. against EU competitors</p>
                 <div class="relative flex-grow">
                     <canvas id="rankChart"></canvas>
                 </div>
             </section>
-
-            <!-- 3. Sample Population Chart (New) -->
-            <section class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[400px]">
-                <h2 class="text-xl font-bold text-[#002452] mb-4">Sample Population Size per Country</h2>
-                <div class="chart-scroll-container flex-grow" id="popScrollArea">
-                    <div class="relative w-full" id="popCanvasWrapper">
-                        <canvas id="popChart"></canvas>
-                    </div>
-                </div>
-            </section>
         </div>
 
-        <!-- 4. Detailed Data Table -->
+        <!-- 3. Detailed Data Table -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="p-5 border-b border-gray-200 bg-gray-50">
                 <h2 class="text-lg font-bold text-[#002452]">Detailed Metrics Data</h2>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm" id="dataTable">
+                <table class="w-full text-left text-sm" id="dataTable" style="min-width: 1000px;">
                     <thead class="bg-[#002452] text-white">
                         <tr>
                             <th class="p-4 uppercase text-xs">Year / Season</th>
@@ -97,50 +86,38 @@
             
             // Process data for charts
             const sortedInterest = [...data].sort((a, b) => parseFloat(b.italyInterest) - parseFloat(a.italyInterest));
-            const sortedPop = [...data].sort((a, b) => parseInt(b.totalReg) - parseInt(a.totalReg));
 
             renderInterestChart(sortedInterest);
             renderRankChart(data);
-            renderPopChart(sortedPop);
             renderTable(data);
         }
 
         function renderInterestChart(data) {
-            document.getElementById('interestCanvasWrapper').style.height = (data.length * 40) + 'px';
+            // Set dynamic height so the chart doesn't squish
+            document.getElementById('interestCanvasWrapper').style.height = (data.length * 45) + 'px';
+            
             new Chart(document.getElementById('interestChart'), {
                 type: 'bar',
                 data: {
                     labels: data.map(i => i.country),
                     datasets: [{
-                        data: data.map(i => parseFloat(i.italyInterest)),
+                        data: data.map(i => ({ x: parseFloat(i.italyInterest), total: i.totalReg })),
                         backgroundColor: '#002452',
                         borderRadius: 4
                     }]
                 },
                 options: {
                     indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'right', formatter: v => v + '%' } },
-                    scales: { x: { display: false }, y: { grid: { display: false } } }
-                }
-            });
-        }
-
-        function renderPopChart(data) {
-            document.getElementById('popCanvasWrapper').style.height = (data.length * 35) + 'px';
-            new Chart(document.getElementById('popChart'), {
-                type: 'bar',
-                data: {
-                    labels: data.map(i => i.country),
-                    datasets: [{
-                        label: 'Total Sample Population',
-                        data: data.map(i => parseInt(i.totalReg)),
-                        backgroundColor: '#fdb913',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'right' } },
+                    plugins: { 
+                        legend: { display: false }, 
+                        datalabels: { 
+                            anchor: 'end', 
+                            align: 'right', 
+                            formatter: (v) => `${v.x}% | ${v.total} Reg.`,
+                            color: '#334155',
+                            font: { weight: 'bold' }
+                        } 
+                    },
                     scales: { x: { display: false }, y: { grid: { display: false } } }
                 }
             });
@@ -174,14 +151,14 @@
             const tbody = document.querySelector('#dataTable tbody');
             tbody.innerHTML = data.map(i => `
                 <tr>
-                    <td class="p-4">${i.eventYear}</td>
-                    <td class="p-4 font-bold text-[#002452]">${i.country}</td>
-                    <td class="p-4">${i.totalReg}</td>
-                    <td class="p-4 font-bold text-blue-600">${i.italyInterest}</td>
-                    <td class="p-4">${i.distinctCandidates}</td>
-                    <td class="p-4">${i.euComp1}</td>
-                    <td class="p-4">${i.euComp2}</td>
-                    <td class="p-4 font-bold">${i.italyRank}</td>
+                    <td class="p-4 whitespace-nowrap">${i.eventYear}</td>
+                    <td class="p-4 font-bold text-[#002452] whitespace-nowrap">${i.country}</td>
+                    <td class="p-4 whitespace-nowrap">${i.totalReg}</td>
+                    <td class="p-4 font-bold text-blue-600 whitespace-nowrap">${i.italyInterest}</td>
+                    <td class="p-4 whitespace-nowrap">${i.distinctCandidates}</td>
+                    <td class="p-4 whitespace-nowrap">${i.euComp1}</td>
+                    <td class="p-4 whitespace-nowrap">${i.euComp2}</td>
+                    <td class="p-4 font-bold whitespace-nowrap">${i.italyRank}</td>
                 </tr>
             `).join('');
         }
