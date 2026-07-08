@@ -44,9 +44,10 @@
                 </p>
             </div>
             
-            <div class="flex gap-2 bg-white/10 p-1.5 rounded-lg backdrop-blur-sm">
+            <div class="flex gap-2 bg-white/10 p-1.5 rounded-lg backdrop-blur-sm flex-wrap justify-end">
                 <button id="btnSortAlpha" class="px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20" onclick="handleSort('alpha')">Sort A-Z</button>
-                <button id="btnSortDesc" class="px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm" onclick="handleSort('desc')">Sort by Top Interest</button>
+                <button id="btnSortDesc" class="px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm" onclick="handleSort('desc')">Sort by Interest (%)</button>
+                <button id="btnSortVolume" class="px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20" onclick="handleSort('volume')">Sort by Volume</button>
             </div>
         </header>
 
@@ -109,7 +110,7 @@
         let dashboardData = [];
         let myChart = null;
         let myRankChart = null; 
-        let currentSort = 'desc';
+        let currentSort = 'desc'; // Default sort
 
         Chart.register(ChartDataLabels);
 
@@ -172,23 +173,31 @@
             
             const btnAlpha = document.getElementById('btnSortAlpha');
             const btnDesc = document.getElementById('btnSortDesc');
+            const btnVolume = document.getElementById('btnSortVolume');
             
-            if(sortType === 'alpha') {
-                btnAlpha.className = "px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm";
-                btnDesc.className = "px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20";
-            } else {
-                btnDesc.className = "px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm";
-                btnAlpha.className = "px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20";
-            }
+            const activeClass = "px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm";
+            const inactiveClass = "px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20";
+            
+            // Apply active/inactive styling based on current sort
+            btnAlpha.className = sortType === 'alpha' ? activeClass : inactiveClass;
+            btnDesc.className = sortType === 'desc' ? activeClass : inactiveClass;
+            btnVolume.className = sortType === 'volume' ? activeClass : inactiveClass;
             
             renderDashboard();
         }
 
         function renderDashboard() {
             let sortedData = [...dashboardData];
+            
+            // Apply Sorting logic
             if (currentSort === 'desc') {
+                // Sort by highest percentage
                 sortedData.sort((a, b) => b.numericInterest - a.numericInterest);
+            } else if (currentSort === 'volume') {
+                // NEW: Sort by highest distinct volume
+                sortedData.sort((a, b) => b.distinctNum - a.distinctNum);
             } else {
+                // Sort A-Z by country name
                 sortedData.sort((a, b) => a.country.localeCompare(b.country));
             }
 
@@ -251,7 +260,7 @@
                             align: 'right',
                             font: { weight: 'bold', family: 'Inter', size: 12 },
                             formatter: function(value, context) { 
-                                // NEW: Format perfectly matches user sketch -> Distinct | Percentage%
+                                // Format: Distinct | Percentage%
                                 if (value > 0) {
                                     const distinct = distinctCounts[context.dataIndex];
                                     return `${distinct.toLocaleString()} | ${value}%`;
@@ -265,7 +274,7 @@
                             beginAtZero: true,
                             grid: { color: '#f1f5f9' },
                             ticks: { callback: function(value) { return value + '%'; } },
-                            // Increased grace to give plenty of room for the wider '344 | 2%' labels
+                            // Give room for the wider '344 | 2%' labels
                             grace: '30%' 
                         },
                         y: {
