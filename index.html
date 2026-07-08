@@ -33,41 +33,33 @@
 </head>
 <body class="p-4 md:p-8">
 
-    <!-- Main Container -->
     <div class="max-w-[1400px] mx-auto space-y-6">
         
-        <!-- Top Header & Controls Area -->
         <header class="bg-[#002452] text-white p-6 rounded-xl shadow-lg border-b-4 border-[#fdb913] flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY 2024-27</h1>
                 <p class="text-blue-200 mt-1 text-sm font-medium">Real-time competitive analysis & regional rankings</p>
-                <!-- NEW: Sample Legenda Added Here -->
                 <p class="text-[#fdb913] mt-2 text-xs font-bold bg-white/10 inline-block px-2 py-1 rounded">
                     Data Sample: Fall / Spring 2024, 2025, 2026
                 </p>
             </div>
             
-            <!-- Sorting Controls moved inside the header for compactness -->
             <div class="flex gap-2 bg-white/10 p-1.5 rounded-lg backdrop-blur-sm">
                 <button id="btnSortAlpha" class="px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20" onclick="handleSort('alpha')">Sort A-Z</button>
                 <button id="btnSortDesc" class="px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm" onclick="handleSort('desc')">Sort by Top Interest</button>
             </div>
         </header>
 
-        <!-- Charts Grid Layout (Middle Section) -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             
-            <!-- Left Chart: Interest Percentage (Spans 2 columns on wide screens) -->
             <section class="xl:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[550px]">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-[#002452]">Regional Interest in Italy (%)</h2>
-                    <!-- NEW: Expanded Badge to show total populations -->
                     <span class="px-3 py-1 bg-blue-50 text-[#002452] text-xs font-bold rounded-full border border-blue-100" id="countryCount">Loading...</span>
                 </div>
                 
                 <div id="loading" class="flex-grow flex items-center justify-center text-gray-500 font-medium">Fetching live data from GitHub...</div>
                 
-                <!-- Scrollable wrapper for the bar chart -->
                 <div class="chart-scroll-container flex-grow" id="chartScrollArea" style="display: none;">
                     <div class="relative w-full" id="canvasWrapper">
                         <canvas id="interestChart"></canvas>
@@ -75,7 +67,6 @@
                 </div>
             </section>
 
-            <!-- Right Chart: NEW Italy Rank Distribution (Spans 1 column) -->
             <section class="xl:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[550px]">
                 <h2 class="text-xl font-bold text-[#002452] mb-1">Italy's Rank Distribution</h2>
                 <p class="text-xs text-gray-500 mb-6">How often Italy places 1st, 2nd, etc. against EU competitors</p>
@@ -86,14 +77,12 @@
             </section>
         </div>
 
-        <!-- Data Table Section (Full Width Bottom) -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="p-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                 <h2 class="text-lg font-bold text-[#002452]">Detailed Metrics Data</h2>
                 <p class="text-xs text-gray-500">Scroll horizontally to view all columns</p>
             </div>
             
-            <!-- overflow-x-auto enables horizontal scrolling if the screen is small -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm" id="dataTable">
                     <thead class="bg-[#002452] text-white">
@@ -102,15 +91,14 @@
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Country</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Total Pop. (Reg)</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Italy Interest</th>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Distinct Candidates</th>
+                            <th class="p-4 font-semibold uppercase tracking-wider text-xs text-[#fdb913]">Distinct Candidates</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Top EU Comp 1</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Top EU Comp 2</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Italy's Rank</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        <!-- Table rows injected via JS -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </section>
@@ -152,22 +140,24 @@
                 }
                 numericInterest = Math.round(numericInterest * 10) / 10;
                 
-                // Parse Total Population and calculate interested students for tooltips
                 const totalRegStr = String(item.totalReg || '0').replace(/,/g, '');
                 const totalRegNum = parseInt(totalRegStr) || 0;
-                const interestedStudents = Math.round(totalRegNum * (numericInterest / 100));
+                
+                // Parse Distinct Candidates directly from the data source
+                const distinctStr = String(item.distinctCandidates || '0').replace(/,/g, '');
+                const distinctNum = parseInt(distinctStr) || 0;
                 
                 return {
                     ...item,
                     totalReg: totalRegNum, 
-                    numericInterest: isNaN(numericInterest) ? 0 : numericInterest,
-                    interestedStudents: interestedStudents 
+                    distinctNum: distinctNum,
+                    numericInterest: isNaN(numericInterest) ? 0 : numericInterest
                 };
             });
 
-            // Update KPI Counter to include Total Populations
+            // Update KPI Counter to sum Distinct Candidates
             const globalPop = dashboardData.reduce((sum, curr) => sum + curr.totalReg, 0);
-            const globalInterested = dashboardData.reduce((sum, curr) => sum + curr.interestedStudents, 0);
+            const globalInterested = dashboardData.reduce((sum, curr) => sum + curr.distinctNum, 0);
             
             document.getElementById('countryCount').innerText = `${dashboardData.length} Countries | Total Pop: ${globalPop.toLocaleString()} | Total Interested: ${globalInterested.toLocaleString()}`;
 
@@ -216,9 +206,8 @@
             const labels = data.map(item => item.country);
             const dataPoints = data.map(item => item.numericInterest);
             
-            // Extract totals for tooltip
             const totalRegs = data.map(item => item.totalReg);
-            const interestedCounts = data.map(item => item.interestedStudents);
+            const distinctCounts = data.map(item => item.distinctNum);
 
             if (myChart) myChart.destroy();
 
@@ -241,18 +230,17 @@
                     indexAxis: 'y', 
                     plugins: {
                         legend: { display: false },
-                        // Custom Tooltip to show real student numbers
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
                                     const idx = context.dataIndex;
                                     const percent = context.parsed.x;
                                     const pop = totalRegs[idx].toLocaleString();
-                                    const interested = interestedCounts[idx].toLocaleString();
+                                    const distinct = distinctCounts[idx].toLocaleString();
                                     return [
                                         `Interest: ${percent}%`,
                                         `Total Population: ${pop}`,
-                                        `Est. Interested Students: ${interested}`
+                                        `Interested Students (Distinct): ${distinct}`
                                     ];
                                 }
                             }
@@ -262,7 +250,14 @@
                             anchor: 'end',
                             align: 'right',
                             font: { weight: 'bold', family: 'Inter', size: 12 },
-                            formatter: function(value) { return value > 0 ? value + '%' : ''; }
+                            formatter: function(value, context) { 
+                                // NEW: Format perfectly matches user sketch -> Distinct | Percentage%
+                                if (value > 0) {
+                                    const distinct = distinctCounts[context.dataIndex];
+                                    return `${distinct.toLocaleString()} | ${value}%`;
+                                }
+                                return ''; 
+                            }
                         }
                     },
                     scales: {
@@ -270,7 +265,8 @@
                             beginAtZero: true,
                             grid: { color: '#f1f5f9' },
                             ticks: { callback: function(value) { return value + '%'; } },
-                            grace: '10%' 
+                            // Increased grace to give plenty of room for the wider '344 | 2%' labels
+                            grace: '30%' 
                         },
                         y: {
                             grid: { display: false },
@@ -385,7 +381,7 @@
                             ${item.numericInterest}%
                         </span>
                     </td>
-                    <td class="p-4">${(item.distinctCandidates || 0).toLocaleString()}</td>
+                    <td class="p-4 font-bold text-blue-700 bg-blue-50/20">${item.distinctNum.toLocaleString()}</td>
                     <td class="p-4 text-gray-600">${item.euComp1 || '-'}</td>
                     <td class="p-4 text-gray-600">${item.euComp2 || '-'}</td>
                     <td class="p-4">
