@@ -41,6 +41,10 @@
             <div>
                 <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY 2024-27</h1>
                 <p class="text-blue-200 mt-1 text-sm font-medium">Real-time competitive analysis & regional rankings</p>
+                <!-- NEW: Sample Legenda Added Here -->
+                <p class="text-[#fdb913] mt-2 text-xs font-bold bg-white/10 inline-block px-2 py-1 rounded">
+                    Data Sample: Fall / Spring 2024, 2025, 2026
+                </p>
             </div>
             
             <!-- Sorting Controls moved inside the header for compactness -->
@@ -57,6 +61,7 @@
             <section class="xl:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[550px]">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-[#002452]">Regional Interest in Italy (%)</h2>
+                    <!-- NEW: Expanded Badge to show total populations -->
                     <span class="px-3 py-1 bg-blue-50 text-[#002452] text-xs font-bold rounded-full border border-blue-100" id="countryCount">Loading...</span>
                 </div>
                 
@@ -95,8 +100,10 @@
                         <tr>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Year / Season</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Country</th>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Total Reg.</th>
+                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Total Pop. (Reg)</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Italy Interest</th>
+                            <!-- NEW: Added Est. Interested Students Column -->
+                            <th class="p-4 font-semibold uppercase tracking-wider text-xs text-[#fdb913]">Est. Interested Students</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Distinct Candidates</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Top EU Comp 1</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Top EU Comp 2</th>
@@ -147,14 +154,24 @@
                 }
                 numericInterest = Math.round(numericInterest * 10) / 10;
                 
+                // NEW: Parse Total Population and calculate interested students
+                const totalRegStr = String(item.totalReg || '0').replace(/,/g, '');
+                const totalRegNum = parseInt(totalRegStr) || 0;
+                const interestedStudents = Math.round(totalRegNum * (numericInterest / 100));
+                
                 return {
                     ...item,
-                    numericInterest: isNaN(numericInterest) ? 0 : numericInterest
+                    totalReg: totalRegNum, 
+                    numericInterest: isNaN(numericInterest) ? 0 : numericInterest,
+                    interestedStudents: interestedStudents // Saved for charts and tables
                 };
             });
 
-            // Update KPI Counter
-            document.getElementById('countryCount').innerText = `${dashboardData.length} Countries Analyzed`;
+            // NEW: Update KPI Counter to include Total Populations
+            const globalPop = dashboardData.reduce((sum, curr) => sum + curr.totalReg, 0);
+            const globalInterested = dashboardData.reduce((sum, curr) => sum + curr.interestedStudents, 0);
+            
+            document.getElementById('countryCount').innerText = `${dashboardData.length} Countries | Total Pop: ${globalPop.toLocaleString()} | Total Interested: ${globalInterested.toLocaleString()}`;
 
             document.getElementById('loading').style.display = 'none';
             document.getElementById('chartScrollArea').style.display = 'block';
@@ -201,6 +218,10 @@
             const ctx = document.getElementById('interestChart').getContext('2d');
             const labels = data.map(item => item.country);
             const dataPoints = data.map(item => item.numericInterest);
+            
+            // Extract totals for tooltip
+            const totalRegs = data.map(item => item.totalReg);
+            const interestedCounts = data.map(item => item.interestedStudents);
 
             if (myChart) myChart.destroy();
 
@@ -209,7 +230,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Italy Interest (%)',
+                        label: 'Italy Interest',
                         data: dataPoints,
                         backgroundColor: '#002452',
                         hoverBackgroundColor: '#fdb913',
@@ -223,9 +244,20 @@
                     indexAxis: 'y', 
                     plugins: {
                         legend: { display: false },
+                        // NEW: Custom Tooltip to show real student numbers
                         tooltip: {
                             callbacks: {
-                                label: function(context) { return context.dataset.label + ': ' + context.parsed.x + '%'; }
+                                label: function(context) {
+                                    const idx = context.dataIndex;
+                                    const percent = context.parsed.x;
+                                    const pop = totalRegs[idx].toLocaleString();
+                                    const interested = interestedCounts[idx].toLocaleString();
+                                    return [
+                                        `Interest: ${percent}%`,
+                                        `Total Population: ${pop}`,
+                                        `Est. Interested Students: ${interested}`
+                                    ];
+                                }
                             }
                         },
                         datalabels: {
@@ -368,13 +400,16 @@
                 tr.innerHTML = `
                     <td class="p-4 text-gray-500">${item.eventYear || '-'}</td>
                     <td class="p-4 font-bold text-[#002452]">${item.country || '-'}</td>
-                    <td class="p-4">${item.totalReg || '0'}</td>
+                    <td class="p-4">${item.totalReg.toLocaleString() || '0'}</td>
                     <td class="p-4">
                         <span class="bg-blue-50 text-[#002452] px-2 py-1 rounded font-bold border border-blue-100">
                             ${item.numericInterest}%
                         </span>
                     </td>
-                    <td class="p-4">${item.distinctCandidates || '0'}</td>
+                    <!-- NEW: Estimated Interested Students Cell -->
+                    <td class="p-4 font-bold text-blue-700">${item.interestedStudents.toLocaleString() || '0'}</td>
+                    
+                    <td class="p-4">${(item.distinctCandidates || 0).toLocaleString()}</td>
                     <td class="p-4 text-gray-600">${item.euComp1 || '-'}</td>
                     <td class="p-4 text-gray-600">${item.euComp2 || '-'}</td>
                     <td class="p-4">
