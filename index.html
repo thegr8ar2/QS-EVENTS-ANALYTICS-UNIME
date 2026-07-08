@@ -11,13 +11,14 @@
     
     <style>
         :root {
-            --bg-color: #f4f6f8;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --primary-blue: #37517e;
-            --primary-hover: #2c4266;
-            --border-color: #e5e7eb;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary-blue: #1e3a8a;
+            --primary-hover: #1e40af;
+            --border-color: #e2e8f0;
+            --surface-hover: #f1f5f9;
         }
 
         body {
@@ -25,144 +26,144 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 32px 20px;
             box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
         }
 
-        /* Header Styling */
-        .header-card {
+        .header-card, .controls-card, .chart-card, .table-card {
             background-color: var(--card-bg);
-            padding: 24px;
-            border-radius: 12px;
+            border-radius: 16px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+
+        .header-card {
+            padding: 32px;
+            text-align: center;
         }
 
         .header-card h1 {
-            margin: 0 0 8px 0;
-            font-size: 24px;
-            color: #111827;
-        }
-
-        .header-card p {
             margin: 0;
-            color: var(--text-muted);
-            font-size: 14px;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
         }
 
-        /* Controls Section */
         .controls-card {
-            background-color: var(--card-bg);
             padding: 16px 24px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             display: flex;
-            gap: 12px;
+            gap: 16px;
             align-items: center;
             justify-content: center;
+            background-color: var(--card-bg);
         }
 
         .btn {
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 10px 24px;
+            border-radius: 9999px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid var(--border-color);
-            background: var(--bg-color);
-            color: var(--text-main);
+            background: var(--card-bg);
+            color: var(--text-muted);
         }
 
         .btn.active {
             background-color: var(--primary-blue);
             color: white;
             border-color: var(--primary-blue);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
         }
 
         .btn:hover:not(.active) {
-            background-color: #e5e7eb;
+            background-color: var(--surface-hover);
+            color: var(--text-main);
         }
 
-        /* Chart Section */
         .chart-card {
-            background-color: var(--card-bg);
             padding: 24px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            /* Removed the fixed 650px height so we can handle it dynamically */
             position: relative;
         }
 
-        /* New classes for smooth scrolling to fix clumping */
         .chart-scroll-container {
             overflow-y: auto;
-            max-height: 650px; /* Keep the card a reasonable size */
-            padding-right: 15px; /* Room for the scrollbar */
+            max-height: 650px; 
+            padding-right: 16px; 
         }
+
+        /* Custom Scrollbar for a cleaner look */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         .canvas-wrapper {
             position: relative;
-            /* Height will be injected dynamically via JS */
         }
 
-        /* Table Section */
         .table-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             overflow: hidden;
             overflow-x: auto;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             text-align: left;
             font-size: 14px;
         }
 
         th, td {
-            padding: 16px;
+            padding: 16px 24px;
             border-bottom: 1px solid var(--border-color);
         }
 
         th {
-            background-color: var(--primary-blue);
-            color: white;
+            background-color: #f8fafc;
+            color: var(--text-muted);
             font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             white-space: nowrap;
         }
 
+        tbody tr {
+            transition: background-color 0.15s ease;
+        }
+
         tbody tr:hover {
-            background-color: #f9fafb;
+            background-color: var(--surface-hover);
         }
         
         .highlight-badge {
-            background-color: #e0f2fe;
-            color: #0369a1;
-            padding: 4px 8px;
-            border-radius: 6px;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            padding: 6px 12px;
+            border-radius: 9999px;
             font-weight: 600;
+            font-size: 13px;
         }
 
-        /* Loading State */
         #loading {
             text-align: center;
-            padding: 40px;
+            padding: 60px 40px;
             color: var(--text-muted);
             font-size: 16px;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -173,7 +174,6 @@
         <!-- Header -->
         <div class="header-card">
             <h1>QS Events: Italy Interest Analysis Dashboard</h1>
-            <p>Real-time data synced directly from Google Sheets.</p>
         </div>
 
         <!-- Sorting Controls -->
@@ -321,19 +321,19 @@
                     datasets: [{
                         label: 'Italy Interest',
                         data: dataPoints,
-                        backgroundColor: '#37517e', // Matches UI Mockup
-                        borderRadius: 4,
+                        backgroundColor: '#1e3a8a', // Updated to match new UI theme
+                        borderRadius: 6, // Slightly rounder bars for a modern look
                         barPercentage: 0.7,
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: 'y', // THIS makes the chart horizontal (fixing text overlap)
+                    indexAxis: 'y', 
                     plugins: {
                         legend: {
                             position: 'top',
-                            labels: { font: { family: 'Inter' } }
+                            labels: { font: { family: 'Inter', weight: '500' }, color: '#64748b' }
                         },
                         tooltip: {
                             callbacks: {
@@ -342,14 +342,12 @@
                                 }
                             }
                         },
-                        // Configuration for the labels written directly on the bars
                         datalabels: {
-                            color: '#111827',
+                            color: '#0f172a',
                             anchor: 'end',
                             align: 'right',
                             font: { weight: 'bold', family: 'Inter', size: 12 },
                             formatter: function(value) {
-                                // Hide labels that are 0% to reduce visual clutter
                                 return value > 0 ? value + '%' : '';
                             }
                         }
@@ -357,20 +355,19 @@
                     scales: {
                         x: {
                             beginAtZero: true,
-                            grid: { color: '#f3f4f6' },
+                            grid: { color: '#e2e8f0' },
                             ticks: {
                                 font: { family: 'Inter' },
-                                // Append % sign to the bottom X axis ticks
+                                color: '#64748b',
                                 callback: function(value) {
                                     return value + '%';
                                 }
                             },
-                            // Add extra padding on the right so datalabels don't get cut off
                             grace: '5%' 
                         },
                         y: {
                             grid: { display: false },
-                            ticks: { font: { family: 'Inter', weight: '500' } }
+                            ticks: { font: { family: 'Inter', weight: '500' }, color: '#0f172a' }
                         }
                     }
                 }
