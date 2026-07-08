@@ -1,0 +1,662 @@
+[
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Argentina",
+    "totalReg": 2,
+    "italyInterest": "0.2",
+    "distinctCandidates": 2,
+    "euComp1": "Spain (10%)",
+    "euComp2": "Netherlands (10%)",
+    "italyRank": 1
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Austria",
+    "totalReg": 166,
+    "italyInterest": "0.19",
+    "distinctCandidates": 163,
+    "euComp1": "Germany (20%)",
+    "euComp2": "Switzerland (20%)",
+    "italyRank": 5
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Azerbaijan",
+    "totalReg": 250,
+    "italyInterest": "0.29",
+    "distinctCandidates": 250,
+    "euComp1": "Germany (37%)",
+    "euComp2": "Switzerland (19%)",
+    "italyRank": 2
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Bangladesh",
+    "totalReg": 8,
+    "italyInterest": "0",
+    "distinctCandidates": 0,
+    "euComp1": "Switzerland (13%)",
+    "euComp2": "Germany (13%)",
+    "italyRank": "N/A"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Belgium",
+    "totalReg": 220,
+    "italyInterest": "0.13",
+    "distinctCandidates": 200,
+    "euComp1": "Belgium (37%)",
+    "euComp2": "France (29%)",
+    "italyRank": 5
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Brazil",
+    "totalReg": 2934,
+    "italyInterest": "0.2",
+    "distinctCandidates": 1958,
+    "euComp1": "Spain (23%)",
+    "euComp2": "France (21%)",
+    "italyRank": 3
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Bulgaria",
+    "totalReg": 7,
+    "italyInterest": "0",
+    "distinctCandidates": 0,
+    "euComp1": "Netherlands (29%)",
+    "euComp2": "Germany (29%)",
+    "italyRank": "N/A"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Canada",
+    "totalReg": 542,
+    "italyInterest": "0.03",
+    "distinctCandidates": 317,
+    "euComp1": "France (7%)",
+    "euComp2": "Switzerland (4%)",
+    "italyRank": 4
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Chile",
+    "totalReg": 409,
+    "italyInterest": "0.28",
+    "distinctCandidates": 352,
+    "euComp1": "Spain (41%)",
+    "euComp2": "Germany (18%)",
+    "italyRank": 2
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "China Mainland",
+    "totalReg": 461,
+    "italyInterest": "0.02",
+    "distinctCandidates": 344,
+    "euComp1": "Germany (3%)",
+    "euComp2": "Austria (3%)",
+    "italyRank": 3
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Colombia",
+    "totalReg": 3745,
+    "italyInterest": "0.18",
+    "distinctCandidates": 2518,
+    "euComp1": "Spain (38%)",
+    "euComp2": "Germany (20%)",
+    "italyRank": 3
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Costa Rica",
+    "totalReg": 107,
+    "italyInterest": "0.17",
+    "distinctCandidates": 107,
+    "euComp1": "Spain (45%)",
+    "euComp2": "Germany (20%)",
+    "italyRank": 3
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Denmark",
+    "totalReg": 24,
+    "italyInterest": "0.07",
+    "distinctCandidates": 20,
+    "euComp1": "Denmark (33%)",
+    "euComp2": "Germany (14%)",
+    "italyRank": 7
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Ecuador",
+    "totalReg": 0,
+    "italyInterest": "0",
+    "distinctCandidates": 0,
+    "euComp1": "Switzerland (20%)",
+    "euComp2": "Spain (20%)",
+    "italyRank": "N/A"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Egypt",
+    "totalReg": 254,
+    "italyInterest": "0.19",
+    "distinctCandidates": 254,
+    "euComp1": "Germany (37%)",
+    "euComp2": "Spain (18%)",
+    "italyRank": 2
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Ethiopia",
+    "totalReg": 0,
+    "italyInterest": "0",
+    "distinctCandidates": 0,
+    "euComp1": "N/A",
+    "euComp2": "N/A",
+    "italyRank": "N/A"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "France",
+    "totalReg": 672,
+    "italyInterest": "0.1",
+    "distinctCandidates": 370,
+    "euComp1": "France (59%)",
+    "euComp2": "Switzerland (15%)",
+    "italyRank": 3
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Georgia",
+    "totalReg": 0,
+    "italyInterest": "0",
+    "distinctCandidates": 0,
+    "euComp1": "N/A",
+    "euComp2": "N/A",
+    "italyRank": "N/A"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Germany",
+    "totalReg": 779,
+    "italyInterest": "0.1",
+    "distinctCandidates": 691,
+    "euComp1": "Germany (64%)",
+    "euComp2": "Switzerland (17%)",
+    "italyRank": 6
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Ghana",
+    "totalReg": 446,
+    "italyInterest": "0.03",
+    "distinctCandidates": 426,
+    "euComp1": "Germany (19%)",
+    "euComp2": "Netherlands (9%)",
+    "italyRank": 8
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Greece",
+    "totalReg": 3460,
+    "italyInterest": "0.24",
+    "distinctCandidates": 2575,
+    "euComp1": "Netherlands (34%)",
+    "euComp2": "France (18%)",
+    "italyRank": 2
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Hong Kong S.A.R",
+    "totalReg": 27,
+    "italyInterest": "0.03",
+    "distinctCandidates": 24,
+    "euComp1": "France (5%)",
+    "euComp2": "Switzerland (4%)",
+    "italyRank": 5
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "India",
+    "totalReg": 2643,
+    "italyInterest": "0.04",
+    "distinctCandidates": 2192,
+    "euComp1": "Germany (17%)",
+    "euComp2": "France (8%)",
+    "italyRank": 6
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Indonesia",
+    "totalReg": 619,
+    "italyInterest": "0.04",
+    "distinctCandidates": 416,
+    "euComp1": "Netherlands (17%)",
+    "euComp2": "Germany (13%)",
+    "italyRank": 5
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Iran",
+    "totalReg": "NO DATA FOUND",
+    "italyInterest": "NO DATA FOUND",
+    "distinctCandidates": "NO DATA FOUND",
+    "euComp1": "NO DATA FOUND",
+    "euComp2": "NO DATA FOUND",
+    "italyRank": "NO DATA FOUND"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Ireland",
+    "totalReg": 40,
+    "italyInterest": "0.09",
+    "distinctCandidates": 35,
+    "euComp1": "Netherlands (13%)",
+    "euComp2": "France (12%)",
+    "italyRank": 4
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Israel",
+    "totalReg": "NO DATA FOUND",
+    "italyInterest": "NO DATA FOUND",
+    "distinctCandidates": "NO DATA FOUND",
+    "euComp1": "NO DATA FOUND",
+    "euComp2": "NO DATA FOUND",
+    "italyRank": "NO DATA FOUND"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Italy",
+    "totalReg": 7822,
+    "italyInterest": "0.44",
+    "distinctCandidates": 5554,
+    "euComp1": "France (24%)",
+    "euComp2": "Spain (21%)",
+    "italyRank": 1
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Japan",
+    "totalReg": 249,
+    "italyInterest": "0.05",
+    "distinctCandidates": 158,
+    "euComp1": "France (14%)",
+    "euComp2": "Germany (9%)",
+    "italyRank": 6
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Jordan",
+    "totalReg": 0,
+    "italyInterest": "0",
+    "distinctCandidates": 0,
+    "euComp1": "N/A",
+    "euComp2": "N/A",
+    "italyRank": "N/A"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Kazakhstan",
+    "totalReg": 967,
+    "italyInterest": "0.15",
+    "distinctCandidates": 963,
+    "euComp1": "Germany (11%)",
+    "euComp2": "France (7%)",
+    "italyRank": 1
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Kenya",
+    "totalReg": 246,
+    "italyInterest": "0.02",
+    "distinctCandidates": 239,
+    "euComp1": "Germany (11%)",
+    "euComp2": "Netherlands (5%)",
+    "italyRank": 7
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Lebanon",
+    "totalReg": "NO DATA FOUND",
+    "italyInterest": "NO DATA FOUND",
+    "distinctCandidates": "NO DATA FOUND",
+    "euComp1": "NO DATA FOUND",
+    "euComp2": "NO DATA FOUND",
+    "italyRank": "NO DATA FOUND"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Malaysia",
+    "totalReg": 224,
+    "italyInterest": "0.03",
+    "distinctCandidates": 157,
+    "euComp1": "Germany (12%)",
+    "euComp2": "Switzerland (9%)",
+    "italyRank": 7
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Mexico",
+    "totalReg": 3262,
+    "italyInterest": "0.17",
+    "distinctCandidates": 2102,
+    "euComp1": "Germany (20%)",
+    "euComp2": "France (17%)",
+    "italyRank": 2
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Morocco",
+    "totalReg": 3,
+    "italyInterest": "0.06",
+    "distinctCandidates": 3,
+    "euComp1": "Switzerland (13%)",
+    "euComp2": "Spain (10%)",
+    "italyRank": 4
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Nepal",
+    "totalReg": 37,
+    "italyInterest": "0.02",
+    "distinctCandidates": 37,
+    "euComp1": "Germany (15%)",
+    "euComp2": "Switzerland (5%)",
+    "italyRank": 7
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Netherlands",
+    "totalReg": 126,
+    "italyInterest": "0.12",
+    "distinctCandidates": 109,
+    "euComp1": "France (20%)",
+    "euComp2": "Spain (20%)",
+    "italyRank": 3
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Nigeria",
+    "totalReg": 729,
+    "italyInterest": "0.03",
+    "distinctCandidates": 678,
+    "euComp1": "Germany (11%)",
+    "euComp2": "Ireland (6%)",
+    "italyRank": 7
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Pakistan",
+    "totalReg": "NO DATA FOUND",
+    "italyInterest": "NO DATA FOUND",
+    "distinctCandidates": "NO DATA FOUND",
+    "euComp1": "NO DATA FOUND",
+    "euComp2": "NO DATA FOUND",
+    "italyRank": "NO DATA FOUND"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Peru",
+    "totalReg": 4525,
+    "italyInterest": "0.17",
+    "distinctCandidates": 2437,
+    "euComp1": "Germany (18%)",
+    "euComp2": "France (15%)",
+    "italyRank": 2
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Philippines",
+    "totalReg": 321,
+    "italyInterest": "0.06",
+    "distinctCandidates": 249,
+    "euComp1": "Spain (17%)",
+    "euComp2": "Switzerland (11%)",
+    "italyRank": 6
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Poland",
+    "totalReg": 133,
+    "italyInterest": "0.26",
+    "distinctCandidates": 132,
+    "euComp1": "Spain (22%)",
+    "euComp2": "Switzerland (21%)",
+    "italyRank": 1
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Portugal",
+    "totalReg": 218,
+    "italyInterest": "0.18",
+    "distinctCandidates": 211,
+    "euComp1": "Spain (27%)",
+    "euComp2": "Netherlands (18%)",
+    "italyRank": 3
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Qatar",
+    "totalReg": 22,
+    "italyInterest": "0.06",
+    "distinctCandidates": 22,
+    "euComp1": "Germany (12%)",
+    "euComp2": "Spain (10%)",
+    "italyRank": 7
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Romania",
+    "totalReg": 284,
+    "italyInterest": "0.27",
+    "distinctCandidates": 278,
+    "euComp1": "Spain (28%)",
+    "euComp2": "France (23%)",
+    "italyRank": 2
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Russia",
+    "totalReg": "NO DATA FOUND",
+    "italyInterest": "NO DATA FOUND",
+    "distinctCandidates": "NO DATA FOUND",
+    "euComp1": "NO DATA FOUND",
+    "euComp2": "NO DATA FOUND",
+    "italyRank": "NO DATA FOUND"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Saudi Arabia",
+    "totalReg": 287,
+    "italyInterest": "0.05",
+    "distinctCandidates": 282,
+    "euComp1": "Germany (9%)",
+    "euComp2": "Spain (7%)",
+    "italyRank": 5
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Singapore",
+    "totalReg": 91,
+    "italyInterest": "0.04",
+    "distinctCandidates": 75,
+    "euComp1": "France (11%)",
+    "euComp2": "Switzerland (8%)",
+    "italyRank": 6
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "South Africa",
+    "totalReg": 36,
+    "italyInterest": "0.09",
+    "distinctCandidates": 36,
+    "euComp1": "Germany (16%)",
+    "euComp2": "Switzerland (15%)",
+    "italyRank": 4
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "South Korea",
+    "totalReg": 202,
+    "italyInterest": "0.03",
+    "distinctCandidates": 127,
+    "euComp1": "Germany (14%)",
+    "euComp2": "France (11%)",
+    "italyRank": 6
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Spain",
+    "totalReg": 205,
+    "italyInterest": "0.13",
+    "distinctCandidates": 204,
+    "euComp1": "Switzerland (19%)",
+    "euComp2": "France (18%)",
+    "italyRank": 5
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Sri Lanka",
+    "totalReg": 21,
+    "italyInterest": "0.05",
+    "distinctCandidates": 21,
+    "euComp1": "Germany (16%)",
+    "euComp2": "Switzerland (16%)",
+    "italyRank": 7
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Sweden",
+    "totalReg": 52,
+    "italyInterest": "0.13",
+    "distinctCandidates": 47,
+    "euComp1": "Denmark (42%)",
+    "euComp2": "France (16%)",
+    "italyRank": 4
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Switzerland",
+    "totalReg": 34,
+    "italyInterest": "0.08",
+    "distinctCandidates": 31,
+    "euComp1": "Switzerland (70%)",
+    "euComp2": "France (14%)",
+    "italyRank": 5
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Taiwan",
+    "totalReg": 117,
+    "italyInterest": "0.02",
+    "distinctCandidates": 78,
+    "euComp1": "Germany (12%)",
+    "euComp2": "France (11%)",
+    "italyRank": 7
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Thailand",
+    "totalReg": 106,
+    "italyInterest": "0.03",
+    "distinctCandidates": 65,
+    "euComp1": "Germany (11%)",
+    "euComp2": "Switzerland (8%)",
+    "italyRank": 7
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Turkey",
+    "totalReg": 4419,
+    "italyInterest": "0.27",
+    "distinctCandidates": 3139,
+    "euComp1": "Germany (38%)",
+    "euComp2": "Netherlands (23%)",
+    "italyRank": 2
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Uganda",
+    "totalReg": 1,
+    "italyInterest": "0",
+    "distinctCandidates": 11,
+    "euComp1": "Spain (1%)",
+    "euComp2": "Portugal (1%)",
+    "italyRank": 3
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Ukraine",
+    "totalReg": "NO DATA FOUND",
+    "italyInterest": "NO DATA FOUND",
+    "distinctCandidates": "NO DATA FOUND",
+    "euComp1": "NO DATA FOUND",
+    "euComp2": "NO DATA FOUND",
+    "italyRank": "NO DATA FOUND"
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "United Arab Emirates",
+    "totalReg": 329,
+    "italyInterest": "0.05",
+    "distinctCandidates": 295,
+    "euComp1": "Germany (13%)",
+    "euComp2": "France (7%)",
+    "italyRank": 5
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "United Kingdom",
+    "totalReg": 527,
+    "italyInterest": "0.06",
+    "distinctCandidates": 270,
+    "euComp1": "France (12%)",
+    "euComp2": "Swizterland (8%)",
+    "italyRank": 4
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "United States",
+    "totalReg": 816,
+    "italyInterest": "0.03",
+    "distinctCandidates": 589,
+    "euComp1": " Spain (4%)",
+    "euComp2": "France (4%)",
+    "italyRank": 3
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Uzbekistan",
+    "totalReg": 304,
+    "italyInterest": "0.1",
+    "distinctCandidates": 304,
+    "euComp1": "Germany (17%)",
+    "euComp2": "Switzerland (7%)",
+    "italyRank": 2
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Vietnam",
+    "totalReg": 650,
+    "italyInterest": "0.07",
+    "distinctCandidates": 529,
+    "euComp1": "Germany (14%)",
+    "euComp2": "France (14%)",
+    "italyRank": ""
+  },
+  {
+    "eventYear": "2024-2027 Aggregate ",
+    "country": "Zimbabwe",
+    "totalReg": "NO DATA FOUND",
+    "italyInterest": "NO DATA FOUND",
+    "distinctCandidates": "NO DATA FOUND",
+    "euComp1": "NO DATA FOUND",
+    "euComp2": "NO DATA FOUND",
+    "italyRank": "NO DATA FOUND"
+  }
+]
