@@ -3,30 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QS Events: Italy Interest Analysis</title>
+    <title>QS Events: Italy Interest Analysis Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; background-color: #f4f6f9; color: #333; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        h1 { color: #003366; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .card { background: #fff; border: 1px solid #e1e4e8; padding: 20px; border-radius: 8px; margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #003366; color: white; }
-        tr:hover { background-color: #f8f9fa; }
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --primary-blue: #37517e;
+            --primary-hover: #2c4266;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header Styling */
+        .header-card {
+            background-color: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .header-card h1 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            color: #111827;
+        }
+
+        .header-card p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Controls Section */
+        .controls-card {
+            background-color: var(--card-bg);
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        .btn.active {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .btn:hover:not(.active) {
+            background-color: #e5e7eb;
+        }
+
+        /* Chart Section */
+        .chart-card {
+            background-color: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            /* Give it a good minimum height so horizontal bars aren't squished */
+            height: 650px; 
+            position: relative;
+        }
+
+        /* Table Section */
+        .table-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-blue);
+            color: white;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        .highlight-badge {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        /* Loading State */
+        #loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>Italy vs EU Competitors Performance</h1>
-        <p>Real-time data synced directly from Google Sheets.</p>
         
-        <div class="card">
-            <canvas id="dashboardChart"></canvas>
+        <!-- Header -->
+        <div class="header-card">
+            <h1>QS Events: Italy Interest Analysis Dashboard</h1>
+            <p>Real-time data synced directly from Google Sheets.</p>
         </div>
 
-        <div class="card">
-            <h2>Detailed Data Table</h2>
+        <!-- Sorting Controls -->
+        <div class="controls-card">
+            <button id="btnSortAlpha" class="btn" onclick="handleSort('alpha')">Sort by Country (Alphabetical)</button>
+            <button id="btnSortDesc" class="btn active" onclick="handleSort('desc')">Sort by Italy Interest (%) (Descending)</button>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="chart-card">
+            <div id="loading">Fetching live data from GitHub...</div>
+            <canvas id="interestChart" style="display: none;"></canvas>
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-card">
             <table id="dataTable">
                 <thead>
                     <tr>
@@ -41,64 +193,183 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Data rows will be injected here dynamically -->
+                    <!-- Table rows injected via JS -->
                 </tbody>
             </table>
         </div>
+
     </div>
 
     <script>
-        // Fetch data.json generated by your updated Apps Script
-        fetch('data.json')
-            .then(response => response.json())
-            .then(data => {
-                const tbody = document.querySelector('#dataTable tbody');
-                const labels = [];
-                const interestScores = [];
+        // Global variables to hold data and the chart instance
+        let dashboardData = [];
+        let myChart = null;
+        let currentSort = 'desc'; // Default sort state
 
-                data.forEach(item => {
-                    // 1. Insert rows with your exact columns
-                    const row = `<tr>
-                        <td>${item.eventYear}</td>
-                        <td style="font-weight: bold;">${item.country}</td>
-                        <td>${item.totalReg}</td>
-                        <td style="color: #003366; font-weight: bold;">${item.italyInterest}</td>
-                        <td>${item.distinctCandidates}</td>
-                        <td>${item.euComp1}</td>
-                        <td>${item.euComp2}</td>
-                        <td style="font-weight: bold;">${item.italyRank}</td>
-                    </tr>`;
-                    tbody.innerHTML += row;
+        // Register the DataLabels plugin for Chart.js
+        Chart.register(ChartDataLabels);
 
-                    // 2. Prepare data for the chart
-                    labels.push(item.country);
-                    
-                    // Convert "20%" string format to a clean number for Chart.js
-                    const numericValue = parseFloat((item.italyInterest || '0').replace('%', ''));
-                    interestScores.push(numericValue);
-                });
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+        });
 
-                // 3. Render the chart matching the dark blue theme (#003366)
-                const ctx = document.getElementById('dashboardChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: "Italy Interest (%)",
-                            data: interestScores,
-                            backgroundColor: 'rgba(0, 51, 102, 0.8)', // Theme color with opacity
-                            borderColor: 'rgba(0, 51, 102, 1)',
-                            borderWidth: 1
-                        }]
+        // 1. Fetch data from the Apps Script JSON file
+        async function fetchData() {
+            try {
+                // Ensure we bust cache so it's always the latest data
+                const response = await fetch(`data.json?t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('Data file not found');
+                
+                const rawData = await response.json();
+                processData(rawData);
+            } catch (error) {
+                console.error("Error loading dashboard data:", error);
+                document.getElementById('loading').innerText = "Unable to load data. Waiting for Google Sheets sync...";
+            }
+        }
+
+        // 2. Process and clean the raw data
+        function processData(rawData) {
+            dashboardData = rawData.map(item => {
+                // Remove the '%' sign for mathematical sorting/charting, but keep original for display
+                const rawInterest = item.italyInterest || '0';
+                const numericInterest = parseFloat(rawInterest.toString().replace('%', ''));
+                
+                return {
+                    ...item,
+                    numericInterest: isNaN(numericInterest) ? 0 : numericInterest
+                };
+            });
+
+            // Hide loading text and show canvas
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('interestChart').style.display = 'block';
+
+            // Initial render
+            renderDashboard();
+        }
+
+        // 3. Handle sorting logic based on button clicks
+        function handleSort(sortType) {
+            currentSort = sortType;
+            
+            // Update button UI styles
+            document.getElementById('btnSortAlpha').classList.toggle('active', sortType === 'alpha');
+            document.getElementById('btnSortDesc').classList.toggle('active', sortType === 'desc');
+            
+            renderDashboard();
+        }
+
+        // 4. Render both Chart and Table
+        function renderDashboard() {
+            // Sort data array based on current state
+            let sortedData = [...dashboardData];
+            if (currentSort === 'desc') {
+                sortedData.sort((a, b) => b.numericInterest - a.numericInterest);
+            } else {
+                sortedData.sort((a, b) => a.country.localeCompare(b.country));
+            }
+
+            renderChart(sortedData);
+            renderTable(sortedData);
+        }
+
+        // 5. Build and render the Chart.js horizontal bar chart
+        function renderChart(data) {
+            const ctx = document.getElementById('interestChart').getContext('2d');
+            
+            // Extract labels and data arrays
+            const labels = data.map(item => item.country);
+            const dataPoints = data.map(item => item.numericInterest);
+
+            // Destroy existing chart instance to prevent overlaps when re-rendering
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Italy Interest',
+                        data: dataPoints,
+                        backgroundColor: '#37517e', // Matches UI Mockup
+                        borderRadius: 4,
+                        barPercentage: 0.7,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // THIS makes the chart horizontal (fixing text overlap)
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { font: { family: 'Inter' } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.x + '%';
+                                }
+                            }
+                        },
+                        // Configuration for the labels written directly on the bars
+                        datalabels: {
+                            color: '#111827',
+                            anchor: 'end',
+                            align: 'right',
+                            font: { weight: 'bold', family: 'Inter', size: 12 },
+                            formatter: function(value) {
+                                return value + '%';
+                            }
+                        }
                     },
-                    options: { 
-                        responsive: true,
-                        scales: { y: { beginAtZero: true } } 
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: '#f3f4f6' },
+                            ticks: {
+                                font: { family: 'Inter' },
+                                // Append % sign to the bottom X axis ticks
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            // Add extra padding on the right so datalabels don't get cut off
+                            grace: '5%' 
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter', weight: '500' } }
+                        }
                     }
-                });
-            })
-            .catch(err => console.error("Error loading dashboard data:", err));
+                }
+            });
+        }
+
+        // 6. Render the HTML Table
+        function renderTable(data) {
+            const tbody = document.querySelector('#dataTable tbody');
+            tbody.innerHTML = ''; // Clear previous rows
+
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color: var(--text-muted);">${item.eventYear || '-'}</td>
+                    <td style="font-weight: 600;">${item.country || '-'}</td>
+                    <td>${item.totalReg || '0'}</td>
+                    <td><span class="highlight-badge">${item.numericInterest}%</span></td>
+                    <td>${item.distinctCandidates || '0'}</td>
+                    <td>${item.euComp1 || '-'}</td>
+                    <td>${item.euComp2 || '-'}</td>
+                    <td style="font-weight: 600; color: #0f766e;">${item.italyRank || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
     </script>
 </body>
 </html>
