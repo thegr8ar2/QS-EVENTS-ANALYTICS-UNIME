@@ -11,7 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     
     <style>
-        /* Custom QS Branding Variables */
         :root {
             --qs-navy: #002452;
             --qs-yellow: #fdb913;
@@ -19,41 +18,34 @@
         
         body { font-family: 'Inter', sans-serif; background-color: #f4f6f9; }
         
-        /* Custom Scrollbar for a cleaner look */
         .chart-scroll-container { overflow-y: auto; overflow-x: hidden; padding-right: 8px; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* STRICT Table formatting to prevent clumping */
         table { min-width: 1200px; border-collapse: separate; border-spacing: 0; }
-        th, td { white-space: nowrap; } /* Forces text to stay on one line */
+        th, td { white-space: nowrap; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
-    <!-- Main Container -->
     <div class="max-w-[1400px] mx-auto space-y-6">
         
-        <!-- Top Header & Controls Area -->
         <header class="bg-[#002452] text-white p-6 rounded-xl shadow-lg border-b-4 border-[#fdb913] flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY 2024-27</h1>
+                <h1 class="text-3xl font-bold tracking-tight">QS Events: Region of Interest - ITALY</h1>
                 <p class="text-blue-200 mt-1 text-sm font-medium">Real-time competitive analysis & regional rankings</p>
             </div>
             
-            <!-- Sorting Controls moved inside the header for compactness -->
             <div class="flex gap-2 bg-white/10 p-1.5 rounded-lg backdrop-blur-sm">
                 <button id="btnSortAlpha" class="px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20" onclick="handleSort('alpha')">Sort A-Z</button>
                 <button id="btnSortDesc" class="px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm" onclick="handleSort('desc')">Sort by Top Interest</button>
             </div>
         </header>
 
-        <!-- Charts Grid Layout (Middle Section) -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             
-            <!-- Left Chart: Interest Percentage (Spans 2 columns on wide screens) -->
             <section class="xl:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[550px]">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-[#002452]">Regional Interest in Italy (%)</h2>
@@ -62,7 +54,6 @@
                 
                 <div id="loading" class="flex-grow flex items-center justify-center text-gray-500 font-medium">Fetching live data from GitHub...</div>
                 
-                <!-- Scrollable wrapper for the bar chart -->
                 <div class="chart-scroll-container flex-grow" id="chartScrollArea" style="display: none;">
                     <div class="relative w-full" id="canvasWrapper">
                         <canvas id="interestChart"></canvas>
@@ -70,7 +61,6 @@
                 </div>
             </section>
 
-            <!-- Right Chart: NEW Italy Rank Distribution (Spans 1 column) -->
             <section class="xl:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col h-[550px]">
                 <h2 class="text-xl font-bold text-[#002452] mb-1">Italy's Rank Distribution</h2>
                 <p class="text-xs text-gray-500 mb-6">How often Italy places 1st, 2nd, etc. against EU competitors</p>
@@ -81,21 +71,19 @@
             </section>
         </div>
 
-        <!-- Data Table Section (Full Width Bottom) -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="p-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                 <h2 class="text-lg font-bold text-[#002452]">Detailed Metrics Data</h2>
                 <p class="text-xs text-gray-500">Scroll horizontally to view all columns</p>
             </div>
             
-            <!-- overflow-x-auto enables horizontal scrolling if the screen is small -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm" id="dataTable">
                     <thead class="bg-[#002452] text-white">
                         <tr>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Year / Season</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Country</th>
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Total Reg.</th>
+                            <th class="p-4 font-semibold uppercase tracking-wider text-xs">Sample Pop.</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Italy Interest</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Distinct Candidates</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Top EU Comp 1</th>
@@ -104,18 +92,16 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        <!-- Table rows injected via JS -->
                     </tbody>
                 </table>
             </div>
         </section>
-
     </div>
 
     <script>
         let dashboardData = [];
         let myChart = null;
-        let myRankChart = null; // New chart instance variable
+        let myRankChart = null;
         let currentSort = 'desc';
 
         Chart.register(ChartDataLabels);
@@ -128,12 +114,10 @@
             try {
                 const response = await fetch(`data.json?t=${new Date().getTime()}`);
                 if (!response.ok) throw new Error('Data file not found');
-                
                 const rawData = await response.json();
                 processData(rawData);
             } catch (error) {
-                console.error("Error loading dashboard data:", error);
-                document.getElementById('loading').innerText = "Unable to load data. Waiting for GitHub sync...";
+                document.getElementById('loading').innerText = "Unable to load data.";
             }
         }
 
@@ -141,247 +125,104 @@
             dashboardData = rawData.map(item => {
                 const rawInterest = item.italyInterest || '0';
                 let numericInterest = parseFloat(rawInterest.toString().replace('%', ''));
-                
-                if (numericInterest > 0 && numericInterest <= 1 && !rawInterest.toString().includes('%')) {
-                    numericInterest = numericInterest * 100;
-                }
                 numericInterest = Math.round(numericInterest * 10) / 10;
-                
-                return {
-                    ...item,
-                    numericInterest: isNaN(numericInterest) ? 0 : numericInterest
-                };
+                return { ...item, numericInterest: isNaN(numericInterest) ? 0 : numericInterest };
             });
 
-            // Update KPI Counter
             document.getElementById('countryCount').innerText = `${dashboardData.length} Countries Analyzed`;
-
             document.getElementById('loading').style.display = 'none';
             document.getElementById('chartScrollArea').style.display = 'block';
-
             renderDashboard();
         }
 
         function handleSort(sortType) {
             currentSort = sortType;
-            
-            const btnAlpha = document.getElementById('btnSortAlpha');
-            const btnDesc = document.getElementById('btnSortDesc');
-            
-            if(sortType === 'alpha') {
-                btnAlpha.className = "px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm";
-                btnDesc.className = "px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20";
-            } else {
-                btnDesc.className = "px-4 py-2 rounded-md text-sm font-semibold transition-all bg-[#fdb913] text-[#002452] shadow-sm";
-                btnAlpha.className = "px-4 py-2 rounded-md text-sm font-semibold transition-all text-white hover:bg-white/20";
-            }
-            
             renderDashboard();
         }
 
         function renderDashboard() {
             let sortedData = [...dashboardData];
-            if (currentSort === 'desc') {
-                sortedData.sort((a, b) => b.numericInterest - a.numericInterest);
-            } else {
-                sortedData.sort((a, b) => a.country.localeCompare(b.country));
-            }
+            if (currentSort === 'desc') sortedData.sort((a, b) => b.numericInterest - a.numericInterest);
+            else sortedData.sort((a, b) => a.country.localeCompare(b.country));
 
             renderBarChart(sortedData);
             renderRankChart(sortedData);
             renderTable(sortedData);
         }
 
-        // --- CHART 1: Horizontal Bar Chart ---
         function renderBarChart(data) {
-            // Allocate 40 pixels per row so text never overlaps
             const requiredHeight = data.length * 40;
             document.getElementById('canvasWrapper').style.height = Math.max(requiredHeight, 400) + 'px';
-
             const ctx = document.getElementById('interestChart').getContext('2d');
-            const labels = data.map(item => item.country);
-            const dataPoints = data.map(item => item.numericInterest);
-
             if (myChart) myChart.destroy();
-
             myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: data.map(i => i.country),
                     datasets: [{
                         label: 'Italy Interest (%)',
-                        data: dataPoints,
+                        data: data.map(i => i.numericInterest),
                         backgroundColor: '#002452',
                         hoverBackgroundColor: '#fdb913',
-                        borderRadius: 4, 
-                        barPercentage: 0.7,
+                        borderRadius: 4, barPercentage: 0.7,
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y', 
+                    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
                     plugins: {
                         legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) { return context.dataset.label + ': ' + context.parsed.x + '%'; }
-                            }
-                        },
-                        datalabels: {
-                            color: '#1e293b',
-                            anchor: 'end',
-                            align: 'right',
-                            font: { weight: 'bold', family: 'Inter', size: 12 },
-                            formatter: function(value) { return value > 0 ? value + '%' : ''; }
-                        }
+                        datalabels: { color: '#1e293b', anchor: 'end', align: 'right', font: { weight: 'bold' }, formatter: v => v > 0 ? v + '%' : '' }
                     },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            grid: { color: '#f1f5f9' },
-                            ticks: { callback: function(value) { return value + '%'; } },
-                            grace: '10%' 
-                        },
-                        y: {
-                            grid: { display: false },
-                            ticks: { font: { weight: '600' }, color: '#334155' }
-                        }
-                    }
+                    scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + '%' } }, y: { grid: { display: false } } }
                 }
             });
         }
 
-        // --- CHART 2: New Doughnut Chart for Italy's Rank ---
         function renderRankChart(data) {
-            // Group the data: { "Rank 1": ["Argentina", ...], "Rank 2": [...] }
             const rankGroups = {};
-            
             data.forEach(item => {
                 let rankStr = String(item.italyRank).trim();
-                let label = 'Unranked';
-                
-                if (rankStr && rankStr !== '-' && rankStr !== 'undefined' && !isNaN(rankStr)) {
-                    label = 'Rank ' + rankStr;
-                }
-                
-                if (!rankGroups[label]) {
-                    rankGroups[label] = [];
-                }
+                let label = (rankStr && rankStr !== '-' && !isNaN(rankStr)) ? 'Rank ' + rankStr : 'Unranked';
+                if (!rankGroups[label]) rankGroups[label] = [];
                 rankGroups[label].push(item.country);
             });
 
-            // Sort labels intelligently (Rank 1, Rank 2, ... Unranked)
             const labels = Object.keys(rankGroups).sort((a, b) => {
-                if (a === 'Unranked') return 1;
-                if (b === 'Unranked') return -1;
-                return a.localeCompare(b);
+                if (a === 'Unranked') return 1; if (b === 'Unranked') return -1;
+                return parseInt(a.replace('Rank ', '')) - parseInt(b.replace('Rank ', ''));
             });
-            
-            // The value is the length of the array (number of countries)
             const counts = labels.map(label => rankGroups[label].length);
-
-            // Expanded color palette so colors never repeat (supports up to 12 categories)
-            const bgColors = [
-                '#fdb913', // QS Yellow
-                '#002452', // QS Navy
-                '#2563eb', // Blue
-                '#059669', // Emerald Green
-                '#ea580c', // Orange
-                '#8b5cf6', // Purple
-                '#db2777', // Pink
-                '#0891b2', // Cyan
-                '#65a30d', // Lime Green
-                '#475569', // Slate Grey (Usually lands on 'Unranked')
-                '#dc2626', // Red
-                '#d97706'  // Amber
-            ];
+            const bgColors = ['#fdb913', '#002452', '#2563eb', '#059669', '#ea580c', '#8b5cf6', '#db2777', '#0891b2', '#65a30d', '#475569'];
 
             const ctx = document.getElementById('rankChart').getContext('2d');
             if (myRankChart) myRankChart.destroy();
-
             myRankChart = new Chart(ctx, {
                 type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: counts,
-                        backgroundColor: bgColors,
-                        borderWidth: 2,
-                        borderColor: '#ffffff',
-                        hoverOffset: 8
-                    }]
-                },
+                data: { labels, datasets: [{ data: counts, backgroundColor: bgColors, borderWidth: 2, borderColor: '#ffffff' }] },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '60%',
+                    responsive: true, maintainAspectRatio: false, cutout: '60%',
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { padding: 20, usePointStyle: true, font: { family: 'Inter', size: 13 } }
-                        },
-                        datalabels: {
-                            color: '#ffffff',
-                            font: { weight: 'bold', size: 14 },
-                            formatter: (value) => value
-                        },
-                        // CUSTOM TOOLTIP LOGIC
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    // Get the rank label (e.g. "Rank 1")
-                                    const rankLabel = context.label; 
-                                    // Get the list of countries for this rank
-                                    const countryList = rankGroups[rankLabel];
-                                    
-                                    // Create a multiline string for the tooltip
-                                    let tooltipLines = [
-                                        `Count: ${context.raw}`,
-                                        '----------',
-                                        'Countries:'
-                                    ];
-                                    
-                                    // Append each country to the tooltip array
-                                    countryList.forEach(country => {
-                                        tooltipLines.push(`• ${country}`);
-                                    });
-                                    
-                                    return tooltipLines;
-                                }
-                            }
-                        }
+                        legend: { position: 'bottom', labels: { usePointStyle: true } },
+                        tooltip: { callbacks: { label: context => [`Count: ${context.raw}`, 'Countries:', ...rankGroups[context.label].map(c => '• ' + c)] } }
                     }
                 }
             });
         }
 
-        // --- TABLE: Render Data rows ---
         function renderTable(data) {
             const tbody = document.querySelector('#dataTable tbody');
             tbody.innerHTML = ''; 
-
             data.forEach(item => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 transition-colors';
-                
                 tr.innerHTML = `
                     <td class="p-4 text-gray-500">${item.eventYear || '-'}</td>
                     <td class="p-4 font-bold text-[#002452]">${item.country || '-'}</td>
-                    <td class="p-4">${item.totalReg || '0'}</td>
-                    <td class="p-4">
-                        <span class="bg-blue-50 text-[#002452] px-2 py-1 rounded font-bold border border-blue-100">
-                            ${item.numericInterest}%
-                        </span>
-                    </td>
+                    <td class="p-4 font-semibold text-gray-700">${item.totalReg || '0'}</td>
+                    <td class="p-4"><span class="bg-blue-50 text-[#002452] px-2 py-1 rounded font-bold">${item.numericInterest}%</span></td>
                     <td class="p-4">${item.distinctCandidates || '0'}</td>
-                    <td class="p-4 text-gray-600">${item.euComp1 || '-'}</td>
-                    <td class="p-4 text-gray-600">${item.euComp2 || '-'}</td>
-                    <td class="p-4">
-                        <span class="bg-[#fdb913]/20 text-[#002452] px-2 py-1 rounded font-bold border border-[#fdb913]/40">
-                            ${item.italyRank || '-'}
-                        </span>
-                    </td>
+                    <td class="p-4">${item.euComp1 || '-'}</td>
+                    <td class="p-4">${item.euComp2 || '-'}</td>
+                    <td class="p-4"><span class="bg-[#fdb913]/20 text-[#002452] px-2 py-1 rounded font-bold">${item.italyRank || '-'}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
