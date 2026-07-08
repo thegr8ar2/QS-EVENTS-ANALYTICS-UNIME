@@ -102,8 +102,6 @@
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Country</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Total Pop. (Reg)</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Italy Interest</th>
-                            <!-- NEW: Added Est. Interested Students Column -->
-                            <th class="p-4 font-semibold uppercase tracking-wider text-xs text-[#fdb913]">Est. Interested Students</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Distinct Candidates</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Top EU Comp 1</th>
                             <th class="p-4 font-semibold uppercase tracking-wider text-xs">Top EU Comp 2</th>
@@ -122,7 +120,7 @@
     <script>
         let dashboardData = [];
         let myChart = null;
-        let myRankChart = null; // New chart instance variable
+        let myRankChart = null; 
         let currentSort = 'desc';
 
         Chart.register(ChartDataLabels);
@@ -154,7 +152,7 @@
                 }
                 numericInterest = Math.round(numericInterest * 10) / 10;
                 
-                // NEW: Parse Total Population and calculate interested students
+                // Parse Total Population and calculate interested students for tooltips
                 const totalRegStr = String(item.totalReg || '0').replace(/,/g, '');
                 const totalRegNum = parseInt(totalRegStr) || 0;
                 const interestedStudents = Math.round(totalRegNum * (numericInterest / 100));
@@ -163,11 +161,11 @@
                     ...item,
                     totalReg: totalRegNum, 
                     numericInterest: isNaN(numericInterest) ? 0 : numericInterest,
-                    interestedStudents: interestedStudents // Saved for charts and tables
+                    interestedStudents: interestedStudents 
                 };
             });
 
-            // NEW: Update KPI Counter to include Total Populations
+            // Update KPI Counter to include Total Populations
             const globalPop = dashboardData.reduce((sum, curr) => sum + curr.totalReg, 0);
             const globalInterested = dashboardData.reduce((sum, curr) => sum + curr.interestedStudents, 0);
             
@@ -211,7 +209,6 @@
 
         // --- CHART 1: Horizontal Bar Chart ---
         function renderBarChart(data) {
-            // Allocate 40 pixels per row so text never overlaps
             const requiredHeight = data.length * 40;
             document.getElementById('canvasWrapper').style.height = Math.max(requiredHeight, 400) + 'px';
 
@@ -244,7 +241,7 @@
                     indexAxis: 'y', 
                     plugins: {
                         legend: { display: false },
-                        // NEW: Custom Tooltip to show real student numbers
+                        // Custom Tooltip to show real student numbers
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -284,9 +281,8 @@
             });
         }
 
-        // --- CHART 2: New Doughnut Chart for Italy's Rank ---
+        // --- CHART 2: Doughnut Chart for Italy's Rank ---
         function renderRankChart(data) {
-            // Group the data: { "Rank 1": ["Argentina", ...], "Rank 2": [...] }
             const rankGroups = {};
             
             data.forEach(item => {
@@ -303,30 +299,18 @@
                 rankGroups[label].push(item.country);
             });
 
-            // Sort labels intelligently (Rank 1, Rank 2, ... Unranked)
             const labels = Object.keys(rankGroups).sort((a, b) => {
                 if (a === 'Unranked') return 1;
                 if (b === 'Unranked') return -1;
                 return a.localeCompare(b);
             });
             
-            // The value is the length of the array (number of countries)
             const counts = labels.map(label => rankGroups[label].length);
 
-            // Expanded color palette so colors never repeat (supports up to 12 categories)
             const bgColors = [
-                '#fdb913', // QS Yellow
-                '#002452', // QS Navy
-                '#2563eb', // Blue
-                '#059669', // Emerald Green
-                '#ea580c', // Orange
-                '#8b5cf6', // Purple
-                '#db2777', // Pink
-                '#0891b2', // Cyan
-                '#65a30d', // Lime Green
-                '#475569', // Slate Grey (Usually lands on 'Unranked')
-                '#dc2626', // Red
-                '#d97706'  // Amber
+                '#fdb913', '#002452', '#2563eb', '#059669', '#ea580c', 
+                '#8b5cf6', '#db2777', '#0891b2', '#65a30d', '#475569', 
+                '#dc2626', '#d97706'
             ];
 
             const ctx = document.getElementById('rankChart').getContext('2d');
@@ -358,23 +342,18 @@
                             font: { weight: 'bold', size: 14 },
                             formatter: (value) => value
                         },
-                        // CUSTOM TOOLTIP LOGIC
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    // Get the rank label (e.g. "Rank 1")
                                     const rankLabel = context.label; 
-                                    // Get the list of countries for this rank
                                     const countryList = rankGroups[rankLabel];
                                     
-                                    // Create a multiline string for the tooltip
                                     let tooltipLines = [
                                         `Count: ${context.raw}`,
                                         '----------',
                                         'Countries:'
                                     ];
                                     
-                                    // Append each country to the tooltip array
                                     countryList.forEach(country => {
                                         tooltipLines.push(`• ${country}`);
                                     });
@@ -406,9 +385,6 @@
                             ${item.numericInterest}%
                         </span>
                     </td>
-                    <!-- NEW: Estimated Interested Students Cell -->
-                    <td class="p-4 font-bold text-blue-700">${item.interestedStudents.toLocaleString() || '0'}</td>
-                    
                     <td class="p-4">${(item.distinctCandidates || 0).toLocaleString()}</td>
                     <td class="p-4 text-gray-600">${item.euComp1 || '-'}</td>
                     <td class="p-4 text-gray-600">${item.euComp2 || '-'}</td>
